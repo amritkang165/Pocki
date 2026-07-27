@@ -94,16 +94,20 @@ flowchart LR
 ## Status
 
 ```text
-  [████████████████████░░░░]  v1 shipped
-  [░░░░░░░░░░░░░░░░░░░░░░░░]  UPI screenshot OCR  ← next
+  [████████████████████░░░░]  v1.0 shipped
+  [░░░░░░░░░░░░░░░░░░░░░░░░]  v1.1 UPI screenshot OCR  ← next
 ```
 
-| | Now (v1) | Next |
-| :---: | :--- | :--- |
-| ✅ | Manual tracking · budget ring · insights | — |
-| ✅ | Search · swipe edit/delete · dark mode | — |
-| 🔜 | Architecture ready (`source` · `confidence`) | **Any UPI screenshot → OCR** |
-| 🔜 | — | Smart categories · export · widgets · CloudKit |
+| Version | What to add |
+| :---: | :--- |
+| **v1.0** ✅ | Manual tracking · budget ring · insights · settings |
+| **v1.1** | **Any UPI screenshot** → on-device OCR → confirm → save |
+| **v1.2** | Smart categories · filters · duplicate warnings |
+| **v1.3** | CSV / PDF export · Share Extension |
+| **v2.0** | Widgets · Live Activities · optional budget alerts |
+| **v2.1** | CloudKit sync · multi-wallet · recurring expenses |
+
+Full breakdown → **[docs/DOCUMENTATION.md §19](docs/DOCUMENTATION.md#19-roadmap--future-architecture)**
 
 ---
 

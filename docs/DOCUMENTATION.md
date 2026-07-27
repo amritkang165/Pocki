@@ -472,19 +472,85 @@ open Pocki.xcodeproj
 
 ## 19. Roadmap & future architecture
 
-### Product roadmap
+### What to add in next versions
 
-| Priority | Feature |
+#### v1.1 — Screenshot intake (the unique feature)
+
+The first big upgrade after manual tracking.
+
+| Add | Details |
 | --- | --- |
-| 1 | **UPI screenshot upload** (any UPI app) |
-| 2 | On-device OCR → amount, merchant, date |
-| 3 | User verification of OCR results (`isVerified`) |
-| 4 | Smart / AI category suggestions |
-| 5 | CSV / PDF export |
-| 6 | Share Extension |
-| 7 | Widgets · Live Activities · Dynamic Island |
-| 8 | CloudKit sync |
-| 9 | Multiple accounts / wallets |
+| Pick / drop UPI screenshot | Photos picker + drag-and-drop into Add flow |
+| On-device OCR | Extract **amount**, **merchant**, **date/time** |
+| Multi-app parsers | Heuristics for GPay, PhonePe, Paytm, BHIM, Amazon Pay, generic UPI |
+| Review before save | Prefill Add Expense sheet; user confirms / edits |
+| Confidence + verify | Fill `confidence`; set `isVerified` after user OK |
+| Source tagging | Save with `ExpenseSource.ocr` |
+
+```text
+  Photos / Files  →  OCR service  →  prefilled form  →  user confirms  →  expense
+```
+
+#### v1.2 — Smarter tracking
+
+| Add | Details |
+| --- | --- |
+| Smart categories | Suggest category from merchant name / history |
+| Merchant memory | Remember last category per merchant |
+| Filters on Expenses | By category, source (manual vs OCR), date range |
+| Notes templates | Quick chips (“food”, “split”, “refund”) |
+| Duplicate detection | Warn if same amount + merchant + day already exists |
+
+#### v1.3 — Export & share
+
+| Add | Details |
+| --- | --- |
+| CSV export | Wire `ExportService.exportCSV` |
+| PDF monthly statement | Wire `ExportService.exportPDF` |
+| Share sheet | Share file via system share |
+| Share Extension | “Share screenshot → Pocki” from Photos / any app |
+
+#### v2.0 — Glanceable iOS surfaces
+
+| Add | Details |
+| --- | --- |
+| Home Screen widget | Month spent / remaining / ring |
+| Lock Screen widget | Today’s spend |
+| Live Activities | Optional “budget day” progress |
+| Dynamic Island | Compact remaining budget (optional) |
+| Local notifications | Soft budget warnings (80% / 100%) — opt-in only |
+
+#### v2.1 — Sync & multi-wallet
+
+| Add | Details |
+| --- | --- |
+| CloudKit sync | Same data across user’s devices |
+| Multiple wallets / accounts | Cash, UPI, card — optional split |
+| Recurring expenses | Rent, subscriptions auto-suggest |
+| Budgets per category | Caps for Food, Travel, etc. |
+| Accounts / sign-in | Only if CloudKit or multi-device needs it |
+
+#### Later / experimental
+
+| Add | Details |
+| --- | --- |
+| AI categorization | On-device or private model for merchants |
+| Receipt OCR beyond UPI | Store bills, invoices |
+| Bank CSV import | `ExpenseSource.import` |
+| Apple Watch glance | Today + remaining |
+| App Intents / Siri | “Log ₹120 at Starbucks” |
+
+### Version snapshot
+
+```text
+  v1.0   ✅  Manual tracking · budget · insights · settings
+  v1.1   ▢   Any UPI screenshot → OCR → confirm → save
+  v1.2   ▢   Smart categories · filters · duplicates
+  v1.3   ▢   CSV / PDF export · Share Extension
+  v2.0   ▢   Widgets · Live Activities · budget alerts
+  v2.1   ▢   CloudKit · multi-wallet · recurring
+  later  ▢   AI · Watch · Siri · bank import
+```
 
 ### How the code is already prepared
 
@@ -504,10 +570,25 @@ Suggested future module layout:
 Services/
   OCR/
     ScreenshotOCRService.swift
-    UPIScreenshotParser.swift
-Extensions/ or ShareExtension/   (later target)
-Widgets/                         (later target)
+    UPIScreenshotParser.swift      # per-app / generic UPI layouts
+Extensions/
+  ShareExtension/                  # later target
+Widgets/
+  BudgetWidget/                    # later target
 ```
+
+### Build order (recommended)
+
+1. Photo picker → prefill manual fields (no OCR yet)  
+2. On-device Vision OCR → parse amount / merchant / date  
+3. Review UI + `confidence` / `isVerified`  
+4. Per-app UPI layout tweaks  
+5. Export CSV  
+6. Share Extension (“share screenshot to Pocki”)  
+7. Widgets  
+8. CloudKit  
+
+Keep each version shippable. Don’t block v1.1 on widgets or sync.
 
 ---
 
