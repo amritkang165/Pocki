@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-label="Pocki  Your money, simplified.">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#062E2B"/>
+      <stop offset="45%" stop-color="#0A4F48"/>
+      <stop offset="100%" stop-color="#0F9B8E"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7EF0DF"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="pill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .title { font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif; font-weight: 800; fill: #FFFFFF; letter-spacing: -2px; }
+      .tag { font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif; font-weight: 500; fill: #D7FFF8; }
+      .chip { font-family: ui-rounded, "SF Pro Text", "Segoe UI", system-ui, sans-serif; font-weight: 600; fill: #FFFFFF; font-size: 18px; }
+      .orb { animation: float 5s ease-in-out infinite; }
+      .orb2 { animation: float 6.5s ease-in-out infinite reverse; }
+      .ringSpin { transform-origin: 980px 210px; animation: spin 8s linear infinite; }
+      .pulse { animation: pulse 2.8s ease-in-out infinite; }
+      .fadeUp { animation: fadeUp 1.2s ease-out both; }
+      .fadeUp2 { animation: fadeUp 1.2s ease-out 0.2s both; }
+      .fadeUp3 { animation: fadeUp 1.2s ease-out 0.4s both; }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-14px); }
+      }
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 0.55; }
+        50% { opacity: 1; }
+      }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="420" rx="28" fill="url(#bg)"/>
+
+  <!-- Soft orbs -->
+  <circle class="orb" cx="180" cy="90" r="70" fill="#7EF0DF" opacity="0.18" filter="url(#softGlow)"/>
+  <circle class="orb2" cx="420" cy="340" r="90" fill="#FFFFFF" opacity="0.08" filter="url(#softGlow)"/>
+  <circle class="pulse" cx="760" cy="70" r="36" fill="#B8FFF4" opacity="0.25"/>
+
+  <!-- Animated progress ring -->
+  <g class="ringSpin" opacity="0.95">
+    <circle cx="980" cy="210" r="92" fill="none" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="16"/>
+    <circle cx="980" cy="210" r="92" fill="none" stroke="url(#ring)" stroke-width="16" stroke-linecap="round"
+            stroke-dasharray="420" stroke-dashoffset="110"/>
+  </g>
+  <text x="980" y="204" text-anchor="middle" class="chip" font-size="28" fill="#FFFFFF">68%</text>
+  <text x="980" y="232" text-anchor="middle" class="chip" font-size="14" fill="#D7FFF8" opacity="0.85">budget used</text>
+
+  <!-- Version pill -->
+  <g class="fadeUp">
+    <rect x="64" y="78" rx="18" ry="18" width="118" height="36" fill="url(#pill)" stroke="#FFFFFF" stroke-opacity="0.25"/>
+    <text x="123" y="102" text-anchor="middle" class="chip" font-size="16">v1.0 · MVP</text>
+  </g>
+
+  <!-- Title -->
+  <text class="title fadeUp2" x="64" y="190" font-size="92">Pocki</text>
+  <text class="tag fadeUp3" x="68" y="240" font-size="28">Your money, simplified.</text>
+
+  <!-- Feature chips -->
+  <g class="fadeUp3">
+    <rect x="64" y="286" rx="16" width="210" height="42" fill="#FFFFFF" fill-opacity="0.12"/>
+    <text x="169" y="313" text-anchor="middle" class="chip">=ø Any UPI screenshot</text>
+
+    <rect x="290" y="286" rx="16" width="170" height="42" fill="#FFFFFF" fill-opacity="0.12"/>
+    <text x="375" y="313" text-anchor="middle" class="chip">( SwiftUI · Native</text>
+
+    <rect x="476" y="286" rx="16" width="150" height="42" fill="#FFFFFF" fill-opacity="0.12"/>
+    <text x="551" y="313" text-anchor="middle" class="chip">=Ê Live insights</text>
+  </g>
+</svg>
