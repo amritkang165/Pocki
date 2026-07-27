@@ -1,117 +1,234 @@
 <div align="center">
 
-# Pocki
+```text
+ ██████╗  ██████╗  ██████╗██╗  ██╗██╗
+ ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██║
+ ██████╔╝██║   ██║██║     █████╔╝ ██║
+ ██╔═══╝ ██║   ██║██║     ██╔═██╗ ██║
+ ██║     ╚██████╔╝╚██████╗██║  ██╗██║
+ ╚═╝      ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝
+```
+
 ### Your money, simplified.
 
-**v1.0** · iOS · SwiftUI · SwiftData
+**v1.0** · Premium iOS finance · Built for UPI India
 
-[![iOS](https://img.shields.io/badge/iOS-26%2B-000000?style=flat-square&logo=apple&logoColor=white)](https://developer.apple.com/ios/)
-[![Swift](https://img.shields.io/badge/Swift-6-F05138?style=flat-square&logo=swift&logoColor=white)](https://swift.org)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![iOS](https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/ios/)
+[![Swift](https://img.shields.io/badge/Swift-6-F05138?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
+[![SwiftUI](https://img.shields.io/badge/SwiftUI-Native-0F9B8E?style=for-the-badge&labelColor=042F2E)](#-stack)
+[![License](https://img.shields.io/badge/MIT-License-yellow?style=for-the-badge)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/amritkang165/Pocki?style=for-the-badge&labelColor=042F2E&color=0F9B8E)](https://github.com/amritkang165/Pocki)
+
+```text
+ ╭──────────────────────────────────────────────────────╮
+ │                                                      │
+ │   ★  WHAT MAKES POCKI DIFFERENT                      │
+ │                                                      │
+ │   You already screenshot every UPI payment.          │
+ │   Pocki turns that screenshot into an expense.       │
+ │                                                      │
+ │   Not one wallet. ANY UPI APP.                       │
+ │   GPay · PhonePe · Paytm · BHIM · Amazon Pay · …     │
+ │                                                      │
+ ╰──────────────────────────────────────────────────────╯
+```
 
 </div>
 
 ---
 
-## What’s unique
-
-Most expense apps make you type every purchase.
-
-**Pocki’s core idea is different:**
-
-> You already screenshot every UPI payment.  
-> Pocki turns that screenshot into an expense.
-
-Not locked to one wallet. **Any UPI app:**
-
-`GPay` · `PhonePe` · `Paytm` · `BHIM` · `Amazon Pay` · and more
+## The unique loop
 
 ```text
-  UPI payment  →  screenshot  →  Pocki  →  amount + merchant + date  →  insights
+     ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+     │  Pay with   │      │  Screenshot │      │   Pocki     │
+     │  any UPI    │ ───▶ │  (you already│ ───▶ │  reads it   │
+     │  app        │      │   do this)  │      │             │
+     └─────────────┘      └─────────────┘      └──────┬──────┘
+                                                      │
+                      ┌───────────────────────────────┘
+                      ▼
+     ┌─────────────────────────────────────────────────┐
+     │  amount  +  merchant  +  date  →  insights      │
+     │  budget ring · categories · trends              │
+     └─────────────────────────────────────────────────┘
 ```
 
-That’s the product. Everything else supports it.
+```mermaid
+flowchart LR
+  U["📱 Any UPI app"] --> S["📸 Screenshot"]
+  S --> P["✨ Pocki"]
+  P --> E["💸 Expense"]
+  E --> I["📊 Insights"]
 
-**v1** ships beautiful manual tracking (and the architecture for OCR).  
-**Next** ships screenshot import from any UPI app.
+  style U fill:#042F2E,stroke:#0F9B8E,color:#ECFDF9
+  style S fill:#0F766E,stroke:#5EEAD4,color:#ECFDF9
+  style P fill:#0F9B8E,stroke:#99F6E4,color:#042F2E
+  style E fill:#14B8A6,stroke:#CCFBF1,color:#042F2E
+  style I fill:#2DD4BF,stroke:#F0FDFA,color:#042F2E
+```
 
----
+<details>
+<summary><b>▶ Why this beats typing everything</b></summary>
 
-## Why this matters
+<br/>
 
-| Old way | Pocki way |
-| --- | --- |
-| Open app → type amount → type merchant → pick date | Drop the UPI screenshot you already have |
-| Works for one wallet, or none | Built for **every** UPI app |
-| Easy to forget small spends | Capture happens at payment time |
-| Feels like homework | Feels like Apple made it |
-
----
-
-## Version 1 (now)
-
-Manual tracking done right — fast, calm, native:
-
-- **Home** — monthly budget ring, today / week / average / remaining
-- **Expenses** — search, group by date, swipe edit & delete
-- **Add** — bottom sheet, amount auto-focused, haptics
-- **Insights** — Apple Charts (weekly, monthly, categories, top merchants)
-- **Settings** — budget, currency, reset, about
-
-Future-ready on every expense: `source` · `isVerified` · `confidence` (for OCR).
-
----
-
-## What’s next
-
-1. **Upload any UPI screenshot**
-2. On-device OCR → amount, merchant, date
-3. Smart categories
-4. Export · widgets · CloudKit
-
----
-
-## Stack
-
-`SwiftUI` · `SwiftData` · `MVVM` · `Apple Charts` · `Swift 6` · `iOS 26+`
+| Old expense apps | **Pocki** |
+| :--- | :--- |
+| Open app → type amount → type merchant → pick date | Drop the UPI screenshot you already took |
+| Tied to one bank / one wallet — or nothing | Built for **every** UPI app |
+| Easy to skip ₹49 chai spends | Capture happens at payment time |
+| Feels like homework | Feels native · calm · Apple-like |
 
 ```text
-Pocki/
-├── Models/        ViewModels/        Views/
-├── Components/    Services/          Extensions/
-└── Utilities/
+  typing forever ……………  ✗
+  screenshot → done ………  ✓  ← this is the product
+```
+
+</details>
+
+---
+
+## Status
+
+```text
+  [████████████████████░░░░]  v1 shipped
+  [░░░░░░░░░░░░░░░░░░░░░░░░]  UPI screenshot OCR  ← next
+```
+
+| | Now (v1) | Next |
+| :---: | :--- | :--- |
+| ✅ | Manual tracking · budget ring · insights | — |
+| ✅ | Search · swipe edit/delete · dark mode | — |
+| 🔜 | Architecture ready (`source` · `confidence`) | **Any UPI screenshot → OCR** |
+| 🔜 | — | Smart categories · export · widgets · CloudKit |
+
+---
+
+## Works with
+
+```text
+  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐
+  │   GPay   │  │ PhonePe  │  │  Paytm   │  │   BHIM   │  │  Any UPI ✦   │
+  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────────┘
 ```
 
 ---
 
-## Run
+## v1 feature map
+
+```text
+  ┌─ HOME ─────────────────────────────────────────────┐
+  │  greeting · month spend · animated budget ring     │
+  │  today · week · daily avg · remaining · recent     │
+  └────────────────────────────────────────────────────┘
+            │
+  ┌─ EXPENSES ─────────────────────────────────────────┐
+  │  search · group by date · swipe edit/delete        │
+  │  detail · OCR confidence placeholder               │
+  └────────────────────────────────────────────────────┘
+            │
+  ┌─ ADD (+) ──────────────────────────────────────────┐
+  │  sheet · amount autofocus · categories · haptics   │
+  └────────────────────────────────────────────────────┘
+            │
+  ┌─ INSIGHTS ─────────────────────────────────────────┐
+  │  Apple Charts · categories · top merchants · trend │
+  └────────────────────────────────────────────────────┘
+            │
+  ┌─ SETTINGS ─────────────────────────────────────────┐
+  │  budget · currency · export soon · reset · about   │
+  └────────────────────────────────────────────────────┘
+```
+
+<details>
+<summary><b>▶ Stack & layout</b></summary>
+
+<br/>
+
+```text
+  SwiftUI · SwiftData · MVVM · Apple Charts
+  NavigationStack · SF Symbols · Swift 6 · iOS 26+
+```
+
+```text
+  Pocki/
+  ├── Models/          Expense · Category · Source · Settings
+  ├── ViewModels/      Home · Expenses · Insights · Settings
+  ├── Views/           Tabs + sheets
+  ├── Components/      BudgetCard · ProgressRing · GlassCard
+  ├── Services/        Expense · Budget · Haptics · Export
+  ├── Extensions/      Date · Currency · Theme
+  └── Utilities/       Constants · Mock · Previews
+```
+
+Every expense is OCR-ready: `source` · `isVerified` · `confidence`
+
+</details>
+
+<details>
+<summary><b>▶ Design vibe</b></summary>
+
+<br/>
+
+```text
+  inspired by →  Wallet  ·  Journal  ·  Fitness  ·  Health
+  not inspired by →  Material spam  ·  purple gradients
+```
+
+Calm teal · large rounded type · glass cards · soft motion · dark mode
+
+</details>
+
+---
+
+## Run it
 
 ```bash
 git clone https://github.com/amritkang165/Pocki.git
 cd Pocki
 open Pocki.xcodeproj
+# ⌘R  ·  Xcode 26+  ·  iOS 26
 ```
 
-Xcode 26+ · iOS 26 · **⌘R**
+```text
+  clone ──▶ open ──▶ run ──▶ add an expense ──▶ smile
+    │         │        │
+   git      Xcode    simulator
+```
 
 ---
 
 ## Privacy
 
-On-device SwiftData. No accounts. No backend in v1. OCR will prefer local processing.
+```text
+  on-device SwiftData
+  no accounts · no backend · no tracking (v1)
+  OCR → prefer local processing
+```
 
 ---
 
 ## License
 
-MIT © 2026 [Amrit Kang](https://github.com/amritkang165) — [LICENSE](LICENSE)
+**MIT** © 2026 [Amrit Kang](https://github.com/amritkang165) · [LICENSE](LICENSE)
 
 ---
 
 <div align="center">
 
-**The unique thing:** screenshot any UPI payment → expense, done.
+```text
+  ╔══════════════════════════════════════════════════╗
+  ║                                                  ║
+  ║   screenshot any UPI payment  →  expense, done   ║
+  ║                                                  ║
+  ║   that is Pocki.                                 ║
+  ║                                                  ║
+  ╚══════════════════════════════════════════════════╝
+```
 
-★ [Star the repo](https://github.com/amritkang165/Pocki) if that idea clicks.
+**[★ Star](https://github.com/amritkang165/Pocki)** if the idea hits.
+
+<sub>Made with ♥ in India 🇮🇳</sub>
 
 </div>
