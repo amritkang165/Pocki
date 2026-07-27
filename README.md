@@ -19,10 +19,6 @@ Snap a UPI payment from **any app**. Drop it into Pocki. Watch your spending com
 
 <br/>
 
-<img src="docs/assets/pocki-hero.png" alt="Pocki hero visual" width="92%" />
-
-<br/>
-
 <img src="docs/assets/pocki-upi-strip.svg" alt="Works with GPay, PhonePe, Paytm, BHIM, and any UPI app" width="92%" />
 
 </div>
