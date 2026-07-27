@@ -1,136 +1,199 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/Pocki-Your%20money%2C%20simplified.-0F9B8E?style=for-the-badge&labelColor=111111" alt="Pocki" />
-</p>
+<div align="center">
 
-<h1 align="center">Pocki</h1>
+# Pocki
 
-<p align="center">
-  <strong>Your money, simplified.</strong><br />
-  A premium iOS personal finance tracker — calm, fast, and designed like an Apple first-party app.
-</p>
+### Your money, simplified.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/iOS-26%2B-black?style=flat-square&logo=apple&logoColor=white" alt="iOS 26+" />
-  <img src="https://img.shields.io/badge/Swift-6-F05138?style=flat-square&logo=swift&logoColor=white" alt="Swift 6" />
-  <img src="https://img.shields.io/badge/SwiftUI-Native-0F9B8E?style=flat-square" alt="SwiftUI" />
-  <img src="https://img.shields.io/badge/SwiftData-Local-5AC8FA?style=flat-square" alt="SwiftData" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
+**Version 1.0** · Premium personal finance for iPhone
 
----
+<br/>
 
-## The idea
+[![iOS](https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/ios/)
+[![Swift](https://img.shields.io/badge/Swift-6-F05138?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
+[![SwiftUI](https://img.shields.io/badge/SwiftUI-Native-0F9B8E?style=for-the-badge)](#tech-stack)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-Most expense apps ask you to type everything. That friction is why people quit.
-
-**Pocki’s signature idea:** upload a **Google Pay payment screenshot**, and the app reads the amount, merchant, and date for you — turning a receipt you already have into a clean expense entry.
-
-The current MVP ships **manual tracking** first, with architecture already prepared for screenshot OCR, imports, and smarter categorization.
-
-> Snap it. Save it. Understand it.
-
----
-
-## Why Pocki
-
-| Principle | What it means |
-| --- | --- |
-| **Simplicity** | One job — know where your money went |
-| **Speed** | Add an expense in seconds |
-| **Beauty** | Large type, glass cards, calm teal accents |
-| **Native** | SwiftUI, SwiftData, Apple Charts, SF Symbols |
-| **Future-ready** | OCR, GPay import, CloudKit, widgets — without a rewrite |
-
----
-
-## Features (MVP)
-
-### Home
-- Personalized greeting
-- Monthly spending vs budget
-- Animated budget progress ring
-- Today, this week, daily average, remaining
-- Recent transactions
-
-### Expenses
-- Full history with instant search (merchant, category, notes)
-- Grouped by date
-- Swipe to edit / delete
-- Detail view with source & OCR confidence placeholders
-
-### Add Expense
-- Bottom sheet with auto-focused amount field
-- Merchant, category, date, notes
-- Validation + success haptics
-
-### Insights
-- Weekly & monthly charts (Apple Charts)
-- Category breakdown
-- Top merchants
-- Daily average & week-over-week trend
-
-### Settings
-- Monthly budget
-- Currency
-- Export placeholder
-- Reset all data
-- About / version
-
----
-
-## Coming next
-
-Built into the data model and services — not bolted on later:
-
-- [ ] **Google Pay screenshot upload + OCR**
-- [ ] Smart merchant categorization
-- [ ] CSV / PDF export
-- [ ] Share Extension
-- [ ] Widgets & Live Activities
-- [ ] CloudKit sync
-- [ ] Multiple accounts / wallets
+<br/>
 
 ```text
-ExpenseSource:  manual  →  ocr  →  import
-                ✓ now      soon     soon
+┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│     📸  Screenshot from any UPI app                     │
+│                                                         │
+│         GPay · PhonePe · Paytm · BHIM · …               │
+│                                                         │
+│     ✨  Pocki reads amount, merchant & date             │
+│                                                         │
+│     📊  Your spending — clear, calm, beautiful          │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Snap a UPI payment. Drop it in. Done.**
+
+No endless typing. No forgotten purchases. Just your money — finally understandable.
+
+<br/>
+
+[Features](#-features)·[The Vision](#-the-vision)·[Roadmap](#-roadmap)·[Run](#-run-locally)·[License](#-license)
+
+</div>
+
+---
+
+## Why Pocki exists
+
+You already screenshot every UPI payment.
+
+You just never put those screenshots to work.
+
+**Pocki** turns payment screenshots from **any UPI app** into clean expense entries — then shows you where your money actually went, in an interface that feels like Apple designed it.
+
+> Manual tracking ships in **v1**.  
+> Screenshot import from GPay, PhonePe, Paytm, BHIM & more is the product’s north star — and the architecture is already built for it.
+
+---
+
+## The vision
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### Today — Version 1
+
+Track spending by hand in seconds.
+
+Beautiful home dashboard.  
+Smart insights.  
+Budget ring that actually motivates you.
+
+Calm. Fast. Native.
+
+</td>
+<td width="50%" valign="top">
+
+### Tomorrow — Screenshot magic
+
+Upload a UPI payment screenshot.
+
+Pocki extracts:
+
+- **Amount**
+- **Merchant**
+- **Date & time**
+
+Works across UPI apps — not locked to one wallet.
+
+</td>
+</tr>
+</table>
+
+```text
+  any UPI screenshot  ──▶  OCR  ──▶  verified expense  ──▶  insights
+       ▲
+   GPay · PhonePe · Paytm · BHIM · Amazon Pay · … 
 ```
 
 ---
 
-## Screens
+## Features
 
-| Tab | Purpose |
+### Home — “How am I doing this month?”
+
+| | |
+| :--- | :--- |
+| Greeting that feels personal | Monthly spend vs budget |
+| Animated progress ring | Today · Week · Daily average · Remaining |
+| Recent transactions | Large type, glass cards, zero clutter |
+
+### Expenses — Your full ledger
+
+- Instant search across **merchant · category · notes**
+- Grouped by date
+- Swipe to **edit** or **delete**
+- Detail view with source & OCR confidence placeholders (ready for screenshot flow)
+
+### Add Expense — Bottom sheet bliss
+
+- Amount field auto-focused
+- Merchant, category, date, notes
+- Validation + success haptic
+- One large Save button
+
+### Insights — Charts that breathe
+
+Powered by **Apple Charts**:
+
+- Weekly bars & monthly trend
+- Category breakdown
+- Top merchants
+- Daily average & week-over-week delta
+
+### Settings — Keep it simple
+
+Monthly budget · Currency · Export (soon) · Reset · About
+
+---
+
+## Design language
+
+Inspired by **Apple Wallet · Journal · Fitness · Health**.
+
+| Detail | Choice |
 | --- | --- |
-| 🏠 **Home** | “How am I doing this month?” |
-| 💸 **Expenses** | Searchable ledger |
-| 📊 **Insights** | Charts & trends |
-| ⚙️ **Settings** | Budget, currency, data |
+| Corners | Soft 16–24pt radii |
+| Color | Calm teal accent, minimal palette |
+| Type | Large, rounded, readable |
+| Motion | Subtle rings, sheets, list updates |
+| Mode | Full Dark Mode + Dynamic Type |
+| Feel | Premium. Quiet. Native. |
 
-Floating **+** button everywhere → add expense sheet.
+Not Material. Not noisy. Just Apple-clean.
 
 ---
 
 ## Tech stack
 
 ```text
-SwiftUI · SwiftData · MVVM · Apple Charts
-NavigationStack · SF Symbols · Swift 6 · iOS 26+
+SwiftUI  ·  SwiftData  ·  MVVM  ·  Apple Charts
+NavigationStack  ·  SF Symbols  ·  Swift 6  ·  iOS 26+
 ```
 
-### Architecture
+### Project structure
 
 ```text
 Pocki/
-├── Models/          # Expense, Category, Source, Settings
-├── ViewModels/      # Home, Expenses, Insights, Settings, Add/Detail
-├── Views/           # Tab screens + sheets
-├── Components/      # BudgetCard, ProgressRing, GlassCard, …
-├── Services/        # Expense, Budget, Haptics, Export (placeholder)
-├── Extensions/      # Date, Currency, Theme
-└── Utilities/       # Constants, Mock data, Previews
+├── Models/         Expense · Category · Source · Settings
+├── ViewModels/     Home · Expenses · Insights · Settings · Add / Detail
+├── Views/          Tabs + sheets
+├── Components/     BudgetCard · ProgressRing · GlassCard · …
+├── Services/       Expense · Budget · Haptics · Export
+├── Extensions/     Date · Currency · Theme
+└── Utilities/      Constants · Mock data · Previews
 ```
 
-Views stay UI-only. Logic lives in ViewModels and Services.
+Views = UI only. Logic = ViewModels + Services.
+
+Future-ready fields already live on every expense:
+
+`source` · `isVerified` · `confidence` → built for OCR & UPI imports.
+
+---
+
+## Roadmap
+
+| Status | Feature |
+| :---: | --- |
+| ✅ | Manual expense tracking (v1) |
+| ✅ | Budget ring & insights |
+| ✅ | Search, swipe actions, dark mode |
+| 🔜 | **UPI screenshot upload** (GPay, PhonePe, Paytm, BHIM, …) |
+| 🔜 | On-device OCR for amount / merchant / date |
+| 🔜 | Smart category suggestions |
+| 🔜 | CSV / PDF export |
+| 🔜 | Share Extension · Widgets · Live Activities |
+| 🔜 | CloudKit sync · Multiple wallets |
 
 ---
 
@@ -138,7 +201,6 @@ Views stay UI-only. Logic lives in ViewModels and Services.
 
 - macOS with **Xcode 26+**
 - **iOS 26** simulator or device
-- Apple Developer account (optional for simulator; required for a physical device)
 
 ---
 
@@ -150,42 +212,48 @@ cd Pocki
 open Pocki.xcodeproj
 ```
 
-1. Select an **iPhone** simulator (or your device)
-2. Set your **Team** under *Signing & Capabilities* if running on device
-3. Press **⌘R**
+1. Pick an **iPhone** simulator (or your device)  
+2. Set **Signing Team** if running on device  
+3. Hit **⌘R**
 
 ---
 
-## Data & privacy
+## Privacy
 
-- Everything is stored **on-device** with SwiftData
-- No accounts, no backend, no network calls in the MVP
-- Screenshot OCR (when shipped) will process locally whenever possible
+- Data stays **on your device** (SwiftData)
+- No accounts · no backend · no tracking in v1
+- Screenshot OCR will prefer **on-device** processing
 
 ---
 
 ## Categories
 
-Food · Shopping · Travel · Bills · Entertainment · Health · Education · Groceries · Subscriptions · Other
+`Food` `Shopping` `Travel` `Bills` `Entertainment`  
+`Health` `Education` `Groceries` `Subscriptions` `Other`
 
 ---
 
 ## License
 
-Released under the [MIT License](LICENSE).
+**MIT** — see [LICENSE](LICENSE)
 
-Copyright © 2026 Amrit Kang
-
----
-
-## Author
-
-**Amrit Kang** — creator of Pocki.
-
-The core product vision: *make expense tracking feel effortless by starting from the payment screenshot you already took.*
+Copyright © 2026 **Amrit Kang**
 
 ---
 
-<p align="center">
-  <sub>Built with SwiftUI · Designed to feel like Apple made it</sub>
-</p>
+<div align="center">
+
+### Built for people who already screenshot every payment.
+
+**Pocki v1** — track manually today.  
+Screenshot any UPI app tomorrow.
+
+<br/>
+
+**[★ Star this repo](https://github.com/amritkang165/Pocki)** if the idea resonates.
+
+<br/>
+
+<sub>Designed to feel like Apple made it · Made in India 🇮🇳</sub>
+
+</div>
