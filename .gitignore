@@ -12,3 +12,8 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# Personal test screenshots — never commit financial data
+assest.png
+**/Screenshot *.png
+**/Screenshot-*.png
