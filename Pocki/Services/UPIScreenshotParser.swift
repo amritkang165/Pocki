@@ -32,6 +32,127 @@ enum UPIScreenshotParser {
         return result
     }
 
+    /// Parses a *transaction history* screenshot (a list of payments) into
+    /// one result per row. Amounts mark the rows; the merchant is the nearest
+    /// plausible name above each amount. One screenshot → many expenses.
+    static func parseHistory(_ lines: [RecognizedLine]) -> [OCRParseResult] {
+        let ordered = lines
+            .sorted { $0.yPosition < $1.yPosition }
+            .map { $0.text.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        guard !ordered.isEmpty else { return [] }
+        let app = detectApp(from: ordered)
+        let headerDate = extractHeaderDate(from: ordered) ?? .now
+
+        // 1. Every amount token marks one transaction row.
+        let amountIndexes: [Int] = ordered.enumerated().compactMap { index, line in
+            extractAmount(from: line) != nil ? index : nil
+        }
+
+        guard !amountIndexes.isEmpty else { return [] }
+
+        var transactions: [OCRParseResult] = []
+        for (row, amountIndex) in amountIndexes.enumerated() {
+            let amount = extractAmount(from: ordered[amountIndex])
+            let merchant = historyMerchant(above: ordered, before: amountIndex, skipping: amountIndexes)
+            let date = transactionDate(from: ordered, headerDate: headerDate, amountIndex: amountIndex, row: row)
+
+            var score = 0.5
+            if amount != nil { score += 0.15 }
+            if merchant != nil { score += 0.2 }
+            let confidence = min(score, 0.9)
+
+            transactions.append(OCRParseResult(
+                amount: amount,
+                merchant: merchant,
+                date: date,
+                confidence: confidence,
+                rawText: ordered.joined(separator: "\n"),
+                sourceApp: app
+            ))
+        }
+        return transactions
+    }
+
+    // MARK: - History helpers
+
+    /// Looks above an amount for the nearest plausible merchant line,
+    /// stripping "paid to"/"to:" prefixes and trailing amounts. Never crosses
+    /// into the previous transaction's row.
+    private static func historyMerchant(above lines: [String], before amountIndex: Int, skipping amountIndexes: [Int]) -> String? {
+        for index in stride(from: amountIndex - 1, through: max(0, amountIndex - 5), by: -1) {
+            if amountIndexes.contains(index) { return nil }
+            if let merchant = historyMerchant(from: lines[index]) {
+                return merchant
+            }
+        }
+        return nil
+    }
+
+    private static func historyMerchant(from line: String) -> String? {
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lower = trimmed.lowercased()
+        if let keyword = historyKeywords.first(where: { lower.contains($0) }) {
+            guard let range = trimmed.range(of: keyword, options: [.caseInsensitive]) else { return nil }
+            let after = trimmed[range.upperBound...]
+                .trimmingCharacters(in: CharacterSet(charactersIn: ": ").union(.whitespacesAndNewlines))
+            let cleaned = cleanMerchant(after)
+            if !cleaned.isEmpty, isPlausibleMerchant(cleaned) {
+                return cleaned
+            }
+            return nil
+        }
+        let cleaned = cleanMerchant(trimmed)
+        guard isPlausibleMerchant(cleaned) else { return nil }
+        return cleaned
+    }
+
+    private static let historyKeywords = ["paid to", "sent to", "to:", "to ", "payment to"]
+
+    /// "Today" / "Yesterday" / a date near the top applies to the whole list.
+    private static func extractHeaderDate(from lines: [String]) -> Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_IN")
+        formatter.timeZone = .current
+
+        for line in lines.prefix(4) {
+            if let relative = relativeDate(from: line, formatter: formatter) {
+                return relative
+            }
+            for format in ["dd MMM yyyy", "dd/MM/yyyy", "dd-MM-yyyy"] {
+                formatter.dateFormat = format
+                if let date = formatter.date(from: line) {
+                    return date
+                }
+            }
+        }
+        return nil
+    }
+
+    /// Combines the header day with each row's "· 2:14 PM" time when present.
+    private static func transactionDate(from lines: [String], headerDate: Date, amountIndex: Int, row: Int) -> Date {
+        let searchRange = lines.indices.contains(amountIndex + 1)
+            ? (amountIndex + 1)..<min(lines.count, amountIndex + 3)
+            : (amountIndex + 1)..<(amountIndex + 1)
+
+        for index in searchRange {
+            let lower = lines[index].lowercased()
+            if let time = extractTime(from: lines[index]) {
+                return Calendar.current.date(bySettingHour: time.hour, minute: time.minute, second: 0, of: headerDate)
+                    ?? headerDate
+            }
+            if lower.contains("upi") && index + 1 < lines.count,
+               let time = extractTime(from: lines[index + 1]) {
+                return Calendar.current.date(bySettingHour: time.hour, minute: time.minute, second: 0, of: headerDate)
+                    ?? headerDate
+            }
+        }
+
+        // Keep the row order (roughly 5+ minutes apart) even when no time is visible.
+        return Calendar.current.date(byAdding: .minute, value: -row * 5, to: headerDate) ?? headerDate
+    }
+
     // MARK: - App detection
 
     private static func detectApp(from lines: [String]) -> UPIPaymentApp {
@@ -210,6 +331,8 @@ enum UPIScreenshotParser {
         if lower.contains("amount") || lower.contains("date") || lower.contains("time") { return false }
         if lower.contains("thank you") || lower.contains("received") || lower.contains("from") { return false }
         if lower.contains("reference") || lower.contains("bank") || lower.contains("accenture") { return false }
+        if lower.contains("today") || lower.contains("yesterday") || lower.contains("tomorrow") { return false }
+        if trimmed.range(of: #"^\d{1,2}:\d{2}\s*(am|pm)?$"#, options: [.regularExpression, .caseInsensitive]) != nil { return false }
         if trimmed.allSatisfy({ $0.isNumber || $0.isPunctuation }) { return false }
         if trimmed.allSatisfy({ $0.isNumber || $0 == "." || $0 == "," || $0 == "₹" }) { return false }
         return true

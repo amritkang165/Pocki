@@ -31,6 +31,13 @@ enum ScreenshotOCRService {
         return UPIScreenshotParser.parse(lines)
     }
 
+    /// Runs Vision text recognition on a transaction *history* screenshot and
+    /// returns one parsed result per payment row.
+    static func parseHistory(from image: UIImage) async throws -> [OCRParseResult] {
+        let lines = try await recognizeLines(in: image)
+        return UPIScreenshotParser.parseHistory(lines)
+    }
+
     // MARK: - Vision
 
     /// Recognizes text lines with their vertical position, top to bottom,
