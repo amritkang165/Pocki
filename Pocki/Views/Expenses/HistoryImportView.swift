@@ -211,6 +211,11 @@ struct HistoryImportView: View {
                 Text("Check each row — edit anything wrong, remove what's not yours.")
                     .font(.caption)
                     .foregroundStyle(.tertiary)
+                if viewModel.transactions.contains(where: \.needsReview) {
+                    Text("\(viewModel.transactions.filter(\.needsReview).count) row\(viewModel.transactions.filter(\.needsReview).count == 1 ? "" : "s") flagged — those amounts were read two ways. Verify them.")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.orange)
+                }
             }
         }
     }
@@ -250,6 +255,11 @@ struct HistoryImportView: View {
                                     .font(.caption.weight(.semibold))
                                     .foregroundStyle(.red)
                             }
+                            if transaction.needsReview {
+                                Label("Check amount", systemImage: "exclamationmark.triangle.fill")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.orange)
+                            }
                             Label(transaction.date.formatted(date: .abbreviated, time: .shortened),
                                   systemImage: "clock")
                                 .font(.caption)
@@ -257,6 +267,12 @@ struct HistoryImportView: View {
                             Text("· \(Int(transaction.confidence * 100))%")
                                 .font(.caption.monospacedDigit())
                                 .foregroundStyle(.secondary)
+                        }
+
+                        if let altAmount = transaction.altAmount {
+                            Text("Also read as \(currencySymbol)\(formatAmount(altAmount)) — double-check before saving.")
+                                .font(.caption2)
+                                .foregroundStyle(.orange)
                         }
                     }
 
@@ -279,6 +295,12 @@ struct HistoryImportView: View {
     }
 
     // MARK: - Helpers
+
+    private func formatAmount(_ value: Double) -> String {
+        value.truncatingRemainder(dividingBy: 1) == 0
+            ? String(Int(value))
+            : String(format: "%.2f", value)
+    }
 
     private var currencySymbol: String {
         let code = (try? modelContext.fetch(FetchDescriptor<AppSettings>()).first?.currencyCode) ?? "INR"

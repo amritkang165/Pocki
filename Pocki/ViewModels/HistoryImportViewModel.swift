@@ -12,6 +12,10 @@ final class HistoryTransaction: Identifiable {
     var date: Date
     var isIncluded: Bool
     let isFailed: Bool
+    /// True when two OCR passes read this row's amount differently.
+    let needsReview: Bool
+    /// The amount the second OCR pass read, when it disagreed.
+    let altAmount: Double?
     let confidence: Double
 
     var amount: Double? {
@@ -33,6 +37,8 @@ final class HistoryTransaction: Identifiable {
         merchant = result.merchant ?? ""
         date = result.date ?? defaultDate
         isFailed = result.isFailed
+        needsReview = result.needsReview
+        altAmount = result.altAmount
         isIncluded = !result.isFailed
         confidence = result.confidence
     }

@@ -32,6 +32,11 @@ struct OCRParseResult: Sendable {
     var sourceApp: UPIPaymentApp = .other
     /// True for history rows the bank marked "Failed" / "Cancelled" / "Reversed".
     var isFailed: Bool = false
+    /// True when a second OCR pass read this row's amount differently, so the
+    /// amount is likely misread and deserves a human look.
+    var needsReview: Bool = false
+    /// The amount the second OCR pass read, when it disagrees with the first.
+    var altAmount: Double? = nil
 
     var didExtractAnything: Bool {
         amount != nil || !(merchant?.isEmpty ?? true) || date != nil
