@@ -15,6 +15,7 @@ final class AddExpenseViewModel {
     /// Set when the entry came from a UPI screenshot.
     var source: ExpenseSource = .manual
     var confidence: Double?
+    var sourceApp: UPIPaymentApp?
     var isVerified: Bool = true
 
     var screenshotImage: UIImage?
@@ -98,6 +99,7 @@ final class AddExpenseViewModel {
         screenshotStatusMessage = nil
         screenshotErrorMessage = nil
         confidence = nil
+        sourceApp = nil
         if !isEditing {
             source = .manual
             isVerified = true
@@ -107,6 +109,7 @@ final class AddExpenseViewModel {
     func apply(parseResult: OCRParseResult) {
         source = .ocr
         confidence = parseResult.confidence
+        sourceApp = parseResult.sourceApp
         isVerified = false
 
         if let amount = parseResult.amount {

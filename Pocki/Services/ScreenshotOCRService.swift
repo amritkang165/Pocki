@@ -18,8 +18,8 @@ enum ScreenshotOCRService {
 
     /// Runs Vision text recognition, then parses UPI-style fields.
     static func parseExpense(from image: UIImage) async throws -> OCRParseResult {
-        let text = try await recognizeText(in: image)
-        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        let lines = try await recognizeLines(in: image)
+        guard !lines.isEmpty else {
             return OCRParseResult(
                 amount: nil,
                 merchant: nil,
@@ -28,12 +28,14 @@ enum ScreenshotOCRService {
                 rawText: ""
             )
         }
-        return UPIScreenshotParser.parse(text)
+        return UPIScreenshotParser.parse(lines)
     }
 
     // MARK: - Vision
 
-    private static func recognizeText(in image: UIImage) async throws -> String {
+    /// Recognizes text lines with their vertical position, top to bottom,
+    /// so the parser can follow each UPI app's layout.
+    private static func recognizeLines(in image: UIImage) async throws -> [RecognizedLine] {
         guard let cgImage = image.cgImage else {
             throw OCRError.invalidImage
         }
@@ -45,12 +47,17 @@ enum ScreenshotOCRService {
                     return
                 }
                 let observations = (request.results as? [VNRecognizedTextObservation]) ?? []
-                let lines = observations.compactMap { $0.topCandidates(1).first?.string }
-                continuation.resume(returning: lines.joined(separator: "\n"))
+                let lines = observations.compactMap { observation -> RecognizedLine? in
+                    guard let candidate = observation.topCandidates(1).first else { return nil }
+                    // Vision's boundingBox is normalized with origin at bottom-left.
+                    let yFromTop = 1.0 - Double(observation.boundingBox.midY)
+                    return RecognizedLine(text: candidate.string, yPosition: yFromTop)
+                }
+                continuation.resume(returning: lines)
             }
             request.recognitionLevel = .accurate
             request.usesLanguageCorrection = true
-            request.recognitionLanguages = ["en-US"]
+            request.recognitionLanguages = ["en-IN", "en-US"]
 
             let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
             do {

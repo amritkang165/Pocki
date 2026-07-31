@@ -73,7 +73,7 @@ struct AddExpenseView: View {
                 notesField(viewModel)
 
                 if viewModel.source == .ocr, let confidence = viewModel.confidence {
-                    ocrMetaCard(confidence: confidence)
+                    ocrMetaCard(app: viewModel.sourceApp, confidence: confidence)
                 }
 
                 PrimaryButton(
@@ -190,16 +190,21 @@ struct AddExpenseView: View {
         }
     }
 
-    private func ocrMetaCard(confidence: Double) -> some View {
+    private func ocrMetaCard(app: UPIPaymentApp?, confidence: Double) -> some View {
         GlassCard(padding: 14) {
-            HStack {
-                Label("OCR confidence", systemImage: "waveform.badge.magnifyingglass")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text("\(Int(confidence * 100))%")
-                    .font(.subheadline.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(Color.pockiAccent)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Label("Read from \(app?.displayName ?? "UPI screenshot")", systemImage: "waveform.badge.magnifyingglass")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(Int(confidence * 100))%")
+                        .font(.subheadline.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(Color.pockiAccent)
+                }
+                Text("Review and adjust — nothing saves until you tap Save.")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
             }
         }
     }
