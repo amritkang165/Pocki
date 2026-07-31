@@ -67,17 +67,26 @@ final class AddExpenseViewModel {
         isVerified = expense.isVerified
     }
 
-    /// Runs on-device OCR and prefills fields. User still confirms before save.
-    func importScreenshot(_ image: UIImage) async {
+    /// Runs on-device OCR and prefills fields. Returns true when the screenshot
+    /// is a transaction *history list* (many rows) — the caller should open the
+    /// history review sheet instead of this single-expense form.
+    @discardableResult
+    func importScreenshot(_ image: UIImage) async -> Bool {
         screenshotImage = image
         screenshotErrorMessage = nil
         screenshotStatusMessage = "Reading UPI screenshot…"
         isScanningScreenshot = true
 
         do {
-            let result = try await ScreenshotOCRService.parseExpense(from: image)
-            apply(parseResult: result)
-            if result.didExtractAnything {
+            let scan = try await ScreenshotOCRService.scan(from: image)
+            if scan.history.count >= 2 {
+                screenshotStatusMessage = "\(scan.history.count) transactions found — opening history review…"
+                HapticService.success()
+                isScanningScreenshot = false
+                return true
+            }
+            apply(parseResult: scan.single)
+            if scan.single.didExtractAnything {
                 screenshotStatusMessage = "Review the fields below, then save."
                 HapticService.success()
             } else {
@@ -92,6 +101,7 @@ final class AddExpenseViewModel {
         }
 
         isScanningScreenshot = false
+        return false
     }
 
     func clearScreenshot() {

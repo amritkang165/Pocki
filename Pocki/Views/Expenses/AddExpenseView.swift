@@ -13,6 +13,7 @@ struct AddExpenseView: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var showFileImporter = false
     @State private var showHistoryImport = false
+    @State private var pendingHistoryImage: UIImage?
     @FocusState private var amountFocused: Bool
 
     var body: some View {
@@ -209,7 +210,7 @@ struct AddExpenseView: View {
             }
         }
         .sheet(isPresented: $showHistoryImport) {
-            HistoryImportView()
+            HistoryImportView(initialImage: pendingHistoryImage)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(28)
@@ -376,7 +377,11 @@ struct AddExpenseView: View {
                 return
             }
             amountFocused = false
-            await viewModel.importScreenshot(image)
+            let isHistory = await viewModel.importScreenshot(image)
+            if isHistory {
+                pendingHistoryImage = image
+                showHistoryImport = true
+            }
         } catch {
             viewModel.screenshotErrorMessage = error.localizedDescription
         }
@@ -395,7 +400,11 @@ struct AddExpenseView: View {
                 return
             }
             amountFocused = false
-            await viewModel.importScreenshot(image)
+            let isHistory = await viewModel.importScreenshot(image)
+            if isHistory {
+                pendingHistoryImage = image
+                showHistoryImport = true
+            }
         } catch {
             viewModel.screenshotErrorMessage = error.localizedDescription
         }

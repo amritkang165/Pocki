@@ -2,6 +2,13 @@ import Foundation
 import UIKit
 import Vision
 
+/// One OCR pass, parsed two ways so callers can route a screenshot to the
+/// right flow (single receipt vs. history list) without re-scanning.
+struct ScreenshotScan: Sendable {
+    var single: OCRParseResult
+    var history: [OCRParseResult]
+}
+
 /// On-device OCR for UPI payment screenshots.
 enum ScreenshotOCRService {
     enum OCRError: LocalizedError {
@@ -36,6 +43,16 @@ enum ScreenshotOCRService {
     static func parseHistory(from image: UIImage) async throws -> [OCRParseResult] {
         let lines = try await recognizeLines(in: image)
         return UPIScreenshotParser.parseHistory(lines)
+    }
+
+    /// Runs one OCR pass and returns both the single-receipt and history parses.
+    /// If `history.count >= 2` the screenshot is a transaction list, not a receipt.
+    static func scan(from image: UIImage) async throws -> ScreenshotScan {
+        let lines = try await recognizeLines(in: image)
+        return ScreenshotScan(
+            single: UPIScreenshotParser.parse(lines),
+            history: UPIScreenshotParser.parseHistory(lines)
+        )
     }
 
     // MARK: - Vision

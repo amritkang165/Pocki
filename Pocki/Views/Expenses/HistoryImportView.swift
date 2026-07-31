@@ -8,6 +8,10 @@ struct HistoryImportView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    /// When set (e.g. routed from the Add Expense picker), the screenshot is
+    /// scanned automatically instead of asking the user to pick one.
+    var initialImage: UIImage? = nil
+
     @State private var viewModel: HistoryImportViewModel?
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var showFileImporter = false
@@ -33,6 +37,9 @@ struct HistoryImportView: View {
         }
         .onAppear {
             bootstrapIfNeeded()
+            if let initialImage, viewModel?.transactions.isEmpty ?? true {
+                Task { await viewModel?.importHistory(initialImage) }
+            }
         }
         .onChange(of: selectedPhoto) { _, newItem in
             guard let newItem, let viewModel else { return }
