@@ -11,11 +11,12 @@
 
 ### Your money, simplified.
 
-**v1.0** · Premium iOS finance · Built for UPI India
+**v1.1** · Premium iOS finance · Built for UPI India
 
 [![iOS](https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6-F05138?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
-[![SwiftUI](https://img.shields.io/badge/SwiftUI-Native-0F9B8E?style=for-the-badge&labelColor=042F2E)](#-stack)
+[![SwiftUI](https://img.shields.io/badge/SwiftUI-Native-0F9B8E?style=for-the-badge&labelColor=042F2E)](#features)
+[![Privacy](https://img.shields.io/badge/Privacy-On--device-0F9B8E?style=for-the-badge&labelColor=042F2E)](#privacy)
 [![License](https://img.shields.io/badge/MIT-License-yellow?style=for-the-badge)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/amritkang165/Pocki?style=for-the-badge&labelColor=042F2E&color=0F9B8E)](https://github.com/amritkang165/Pocki)
 
@@ -38,6 +39,18 @@
 ```
 
 </div>
+
+## Contents
+
+- [The unique loop](#the-unique-loop)
+- [Features](#features)
+- [See it work](#see-it-work)
+- [Status](#status)
+- [Works with](#works-with)
+- [v1 feature map](#v1-feature-map)
+- [Run it](#run-it)
+- [Privacy](#privacy)
+- [License](#license)
 
 ---
 
@@ -88,6 +101,35 @@ flowchart LR
   typing forever ……………  ✗
   screenshot → done ………  ✓  ← this is the product
 ```
+
+</details>
+
+---
+
+## Features
+
+|  |  |
+| :--- | :--- |
+| 📸 **Screenshot → expense** | Pick a UPI screenshot from **Photos or Files** → on-device OCR prefills amount, merchant & date → **you review**, then save |
+| 🎯 **Monthly budget** | Set a budget · live ring on Home · remaining · daily average |
+| 🗂 **Categories** | Colour-coded categories per expense · quick picker in Add |
+| 📊 **Insights** | Weekly & monthly charts · category breakdown · top merchants · trend vs last month |
+| 🔍 **Expenses list** | Search · grouped by date · swipe to edit / delete · rich detail view |
+| 🔒 **On-device privacy** | SwiftData locally · no accounts · no backend · no tracking |
+
+<details>
+<summary><b>▶ What OCR extracts from a screenshot</b></summary>
+
+<br/>
+
+| Field | Example |
+| :--- | :--- |
+| Amount | ₹ 250.00 |
+| Merchant | Chai Point |
+| Date & time | 12 Aug · 2:14 PM |
+| Confidence | 92% |
+
+Every expense stores `source` (manual / OCR) · `isVerified` · `confidence`.
 
 </details>
 
@@ -158,11 +200,12 @@ Screenshot → prefilled form → **you** review → save. Nothing is saved unti
             │
   ┌─ EXPENSES ─────────────────────────────────────────┐
   │  search · group by date · swipe edit/delete        │
-  │  detail · OCR confidence placeholder               │
+  │  detail · OCR source + confidence badge            │
   └────────────────────────────────────────────────────┘
             │
   ┌─ ADD (+) ──────────────────────────────────────────┐
   │  sheet · amount autofocus · categories · haptics   │
+  │  UPI screenshot import → OCR → review → save       │
   └────────────────────────────────────────────────────┘
             │
   ┌─ INSIGHTS ─────────────────────────────────────────┐
@@ -190,7 +233,7 @@ Screenshot → prefilled form → **you** review → save. Nothing is saved unti
   ├── ViewModels/      Home · Expenses · Insights · Settings
   ├── Views/           Tabs + sheets
   ├── Components/      BudgetCard · ProgressRing · GlassCard
-  ├── Services/        Expense · Budget · Haptics · Export
+  ├── Services/        Expense · Budget · Haptics · Export · OCR
   ├── Extensions/      Date · Currency · Theme
   └── Utilities/       Constants · Mock · Previews
 ```
