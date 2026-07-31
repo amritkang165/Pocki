@@ -231,6 +231,17 @@ Each category has an SF Symbol and accent color for badges/charts.
 | `currencyCode` | ISO currency (USD, INR, …) |
 | `updatedAt` | Last change |
 
+### MerchantCategory
+
+Remembers the last category the user chose for each merchant (v1.2).
+
+| Field | Notes |
+| --- | --- |
+| `merchant` | Normalized (lowercased, trimmed) merchant name |
+| `category` | `ExpenseCategory`, stored as `categoryRaw` |
+| `usageCount` | How many times this choice has been saved |
+| `lastUsed` | When it was last saved |
+
 ---
 
 ## 8. Persistence (SwiftData)
@@ -239,6 +250,7 @@ Each category has an SF Symbol and accent color for badges/charts.
 - Schema registered in `PockiApp`:
   - `Expense`
   - `AppSettings`
+  - `MerchantCategory`
 - `@Query` in views for live updates
 - Services call `modelContext.save()` after mutations
 
@@ -255,6 +267,13 @@ Full CRUD:
 - `create` · `update` · `delete` · `deleteAll`
 - `fetchAll`
 - `search` across merchant, category, notes
+- `createIfMissing` — batch insert that skips rows already in the store (amount + merchant + day)
+- `suggestedCategory(for:)` — remembered choice first, then `MerchantCategorizer` heuristics
+- `rememberCategory(for:category:)` — upserts the `MerchantCategory` memory row
+
+### MerchantCategorizer
+
+Static keyword→category heuristics (`SWIGGY INSTAMART→Groceries` before `SWIGGY→Food`, etc.). First match wins, so specific rules precede generic ones.
 
 ### BudgetService
 
@@ -509,12 +528,15 @@ open Pocki.xcodeproj
 
 #### v1.2 — Smarter tracking
 
-| Add | Details |
-| --- | --- |
-| Smart categories | Suggest category from merchant name / history |
-| Merchant memory | Remember last category per merchant |
-| Filters on Expenses | By category, source (manual vs OCR), date range |
-| Notes templates | Quick chips (“food”, “split”, “refund”) |
+**Shipped in v1.2:** smart categories + merchant memory.
+
+| Add | Details | Status |
+| --- | --- | :---: |
+| Smart categories | `MerchantCategorizer` maps merchant names to categories via keyword rules (SWIGGY→Food, INSTAMART/DMART→Groceries, SCALER→Education, IRCTC/UBER→Travel, JIO/AIRTEL→Bills, NETFLIX→Subscriptions, PVR→Entertainment, APOLLO→Health…) | ✅ |
+| Merchant memory | `MerchantCategory` model remembers the last category per merchant; `ExpenseService.suggestedCategory` prefers it over heuristics; `rememberCategory` upserts on every save | ✅ |
+| History row categories | Each imported row defaults to its heuristic category, editable via a capsule menu; `saveAll` saves + remembers it | ✅ |
+| Filters on Expenses | By category, source (manual vs OCR), date range | 🔜 |
+| Notes templates | Quick chips (“food”, “split”, “refund”) | 🔜 |
 
 #### v1.3 — Export & share
 
@@ -561,8 +583,8 @@ open Pocki.xcodeproj
   v1.0   ✅  Manual tracking · budget · insights · settings
   v1.1   ✅  Any UPI screenshot → OCR → confirm → save · history import · failed column
   v1.1.5 ✅  Auto-route · dual-pass amount check · duplicate guard · month navigation
-  v1.2   ▢   Smart categories · filters · merchant memory
-  v1.3   ▢   CSV / PDF export · Share Extension
+  v1.2   ✅  Smart categories · merchant memory
+  v1.3   ▢   CSV / PDF export · filters · Share Extension
   v2.0   ▢   Widgets · Live Activities · budget alerts
   v2.1   ▢   CloudKit · multi-wallet · recurring
   later  ▢   AI · Watch · Siri · bank import

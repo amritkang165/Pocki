@@ -11,7 +11,7 @@
 
 ### Your money, simplified.
 
-**v1.1.5** · Premium iOS finance · Built for UPI India
+**v1.2.0** · Premium iOS finance · Built for UPI India
 
 [![iOS](https://img.shields.io/badge/iOS-26%2B-000000?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-6-F05138?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
@@ -116,6 +116,7 @@ flowchart LR
 | ⚠️ **Amount checks** | OCR runs **twice** (1× + 2× upscale) · rows read differently get an orange **"Check amount"** badge with the alternate read shown |
 | 🛡 **Duplicate guard** | Re-importing history **skips rows that already exist** — no double-counting · "N already exist" reported on save |
 | 🗂 **Categories** | Colour-coded categories per expense · quick picker in Add |
+| ✨ **Smart categories** | Merchant names map to categories automatically (SWIGGY→Food, DMART→Groceries, SCALER→Education, JIO→Bills…) · Pocki **remembers** your per-merchant choices for next time |
 | 📊 **Insights** | Weekly & monthly charts · category breakdown · top merchants · trend vs last month |
 | 🔍 **Expenses list** | Search · grouped by date · swipe to edit / delete · rich detail view |
 | 🔒 **On-device privacy** | SwiftData locally · no accounts · no backend · no tracking |
@@ -144,6 +145,7 @@ Every expense stores `source` (manual / OCR) · `isVerified` · `confidence`.
   [████████████████████████]  v1.0 shipped
   [████████████████████████]  v1.1 UPI screenshot OCR  ← shipped
   [████████████████████████]  v1.1.5 Import trust & safeguards  ← shipped
+  [████████████████████████]  v1.2 Smart categories & merchant memory  ← shipped
 ```
 
 | Version | What's in it |
@@ -151,8 +153,8 @@ Every expense stores `source` (manual / OCR) · `isVerified` · `confidence`.
 | **v1.0** ✅ | Manual tracking · monthly budget ring · categories · insights · settings |
 | **v1.1** ✅ | **Any UPI screenshot** → on-device OCR → review → save · **history import** (one list → many expenses) · **failed-transaction column** |
 | **v1.1.5** ✅ | History screenshots **auto-route** to the review sheet · **month navigation** on Home · **dual-pass OCR amount check** (⚠️ on disagreements, alternate read shown) · **duplicate guard** on import · one full-screen review |
-| **v1.2** | Smart categories · filters · merchant memory |
-| **v1.3** | CSV / PDF export · Share Extension |
+| **v1.2** ✅ | **Smart categories** from merchant names · **merchant memory** (remembers your per-merchant choices, auto-suggested next time) |
+| **v1.3** | CSV / PDF export · filters · Share Extension |
 | **v2.0** | Widgets · Live Activities · optional budget alerts |
 | **v2.1** | CloudKit sync · multi-wallet · recurring expenses |
 
