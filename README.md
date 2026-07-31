@@ -19,6 +19,8 @@
 [![License](https://img.shields.io/badge/MIT-License-yellow?style=for-the-badge)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/amritkang165/Pocki?style=for-the-badge&labelColor=042F2E&color=0F9B8E)](https://github.com/amritkang165/Pocki)
 
+<img src="docs/assets/home.png" width="260" alt="Pocki home screen">
+
 **[Full documentation →](docs/DOCUMENTATION.md)**
 
 ```text

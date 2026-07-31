@@ -190,11 +190,7 @@ struct AddExpenseView: View {
         }
     }
 
-    private func importSourceButtons(spacing unused: CGFloat = 0) -> some View {
-        EmptyView()
-    }
-
-    private func ocrMetaCardOLD_REMOVE(confidence: Double) -> some View {
+    private func ocrMetaCard(confidence: Double) -> some View {
         GlassCard(padding: 14) {
             HStack {
                 Label("OCR confidence", systemImage: "waveform.badge.magnifyingglass")
@@ -346,6 +342,25 @@ struct AddExpenseView: View {
             guard let data = try await item.loadTransferable(type: Data.self),
                   let image = UIImage(data: data) else {
                 viewModel.screenshotErrorMessage = "Could not load that photo."
+                return
+            }
+            amountFocused = false
+            await viewModel.importScreenshot(image)
+        } catch {
+            viewModel.screenshotErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func loadFile(_ result: Result<[URL], Error>, into viewModel: AddExpenseViewModel) async {
+        do {
+            guard let url = try result.get().first else { return }
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer {
+                if accessing { url.stopAccessingSecurityScopedResource() }
+            }
+            guard let data = try? Data(contentsOf: url),
+                  let image = UIImage(data: data) else {
+                viewModel.screenshotErrorMessage = "Could not load that file."
                 return
             }
             amountFocused = false
