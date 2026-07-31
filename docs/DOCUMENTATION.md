@@ -495,6 +495,18 @@ open Pocki.xcodeproj
                   →  OCR service  →  many expenses (history)   →  review rows   →  save all
 ```
 
+#### v1.1.5 — Import trust & safeguards
+
+**Shipped in v1.1.5:** auto-routing + dual-pass OCR amount check + duplicate guard + month navigation + full-screen review.
+
+| Add | Details | Status |
+| --- | --- | :---: |
+| History auto-route | Screenshot is scanned once, parsed both ways; history lists open the review sheet automatically | ✅ |
+| Dual-pass amount check | OCR runs at 1× and 2×; rows read differently get a “Check amount” badge + alternate read | ✅ |
+| Duplicate guard | Import skips rows that already exist (amount + merchant + day); “N already exist” shown on save | ✅ |
+| Month navigation | Home budget card browses past months | ✅ |
+| Full-screen review | History review is one full-screen view, not a second stacked sheet | ✅ |
+
 #### v1.2 — Smarter tracking
 
 | Add | Details |
@@ -503,7 +515,6 @@ open Pocki.xcodeproj
 | Merchant memory | Remember last category per merchant |
 | Filters on Expenses | By category, source (manual vs OCR), date range |
 | Notes templates | Quick chips (“food”, “split”, “refund”) |
-| Duplicate detection | Warn if same amount + merchant + day already exists |
 
 #### v1.3 — Export & share
 
@@ -549,7 +560,8 @@ open Pocki.xcodeproj
 ```text
   v1.0   ✅  Manual tracking · budget · insights · settings
   v1.1   ✅  Any UPI screenshot → OCR → confirm → save · history import · failed column
-  v1.2   ▢   Smart categories · filters · duplicates · top-places insights
+  v1.1.5 ✅  Auto-route · dual-pass amount check · duplicate guard · month navigation
+  v1.2   ▢   Smart categories · filters · merchant memory
   v1.3   ▢   CSV / PDF export · Share Extension
   v2.0   ▢   Widgets · Live Activities · budget alerts
   v2.1   ▢   CloudKit · multi-wallet · recurring
