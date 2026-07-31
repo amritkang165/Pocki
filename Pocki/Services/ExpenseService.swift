@@ -88,6 +88,45 @@ final class ExpenseService {
         }
     }
 
+    // MARK: - Merchant category memory
+
+    /// Category to suggest for a merchant: what the user last chose for it
+    /// first, then keyword heuristics. Returns nil when both are unknown.
+    func suggestedCategory(for merchant: String?) -> ExpenseCategory? {
+        guard let merchant else { return nil }
+        let normalized = normalizedMerchant(merchant)
+        if let record = fetchMerchantRecord(normalized) {
+            return record.category
+        }
+        return MerchantCategorizer.heuristic(for: merchant)
+    }
+
+    /// Records the user's final category for a merchant so future entries
+    /// suggest the same category. Upserts the memory row and bumps its count.
+    func rememberCategory(for merchant: String?, category: ExpenseCategory) {
+        guard let merchant else { return }
+        let normalized = normalizedMerchant(merchant)
+        if let record = fetchMerchantRecord(normalized) {
+            record.category = category
+            record.usageCount += 1
+            record.lastUsed = .now
+        } else {
+            modelContext.insert(MerchantCategory(merchant: normalized, category: category))
+        }
+        save()
+    }
+
+    private func fetchMerchantRecord(_ normalized: String) -> MerchantCategory? {
+        let descriptor = FetchDescriptor<MerchantCategory>(
+            predicate: #Predicate { $0.merchant == normalized }
+        )
+        return (try? modelContext.fetch(descriptor))?.first
+    }
+
+    private func normalizedMerchant(_ merchant: String) -> String {
+        merchant.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
     private func save() {
         do {
             try modelContext.save()

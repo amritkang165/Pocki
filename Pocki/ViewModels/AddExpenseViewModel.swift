@@ -7,10 +7,24 @@ import UIKit
 @Observable
 final class AddExpenseViewModel {
     var amountText: String = ""
-    var merchant: String = ""
+    var merchant: String = "" {
+        didSet {
+            guard !isEditing else { return }
+            // Suggest a category as the merchant is typed or auto-filled, but
+            // never clobber a category the user picked themselves.
+            if let suggestion = expenseService.suggestedCategory(for: merchant),
+               category == .food || category == lastSuggestedCategory {
+                category = suggestion
+                lastSuggestedCategory = suggestion
+            }
+        }
+    }
     var category: ExpenseCategory = .food
     var date: Date = .now
     var note: String = ""
+
+    /// Category the auto-suggestion last chose, so manual picks are respected.
+    private var lastSuggestedCategory: ExpenseCategory?
 
     /// Set when the entry came from a UPI screenshot.
     var source: ExpenseSource = .manual
@@ -170,6 +184,10 @@ final class AddExpenseViewModel {
             )
             expenseService.create(expense)
         }
+
+        // Remember the final category so future entries with this merchant
+        // suggest the same one.
+        expenseService.rememberCategory(for: trimmedMerchant, category: category)
 
         HapticService.success()
         return true
