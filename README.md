@@ -111,6 +111,7 @@ flowchart LR
 |  |  |
 | :--- | :--- |
 | 📸 **Screenshot → expense** | Pick a UPI screenshot from **Photos or Files** → on-device OCR prefills amount, merchant & date → **you review**, then save |
+| 📋 **History import** | Share the app's **today list** → every row becomes an editable expense → save all at once |
 | 🎯 **Monthly budget** | Set a budget · live ring on Home · remaining · daily average |
 | 🗂 **Categories** | Colour-coded categories per expense · quick picker in Add |
 | 📊 **Insights** | Weekly & monthly charts · category breakdown · top merchants · trend vs last month |
