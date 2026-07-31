@@ -284,6 +284,32 @@ struct HistoryImportView: View {
                                 .foregroundStyle(.secondary)
                         }
 
+                        Menu {
+                            ForEach(ExpenseCategory.allCases) { category in
+                                Button {
+                                    transaction.category = category
+                                    HapticService.selection()
+                                } label: {
+                                    Label(category.rawValue, systemImage: category.icon)
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 5) {
+                                Image(systemName: transaction.category.icon)
+                                    .font(.caption.weight(.semibold))
+                                Text(transaction.category.rawValue)
+                                    .font(.caption.weight(.medium))
+                            }
+                            .foregroundStyle(transaction.category.color)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(
+                                Capsule().fill(transaction.category.color.opacity(0.12))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(transaction.isIncluded ? 1 : 0.4)
+
                         if let altAmount = transaction.altAmount {
                             Text("Also read as \(currencySymbol)\(formatAmount(altAmount)) — double-check before saving.")
                                 .font(.caption2)

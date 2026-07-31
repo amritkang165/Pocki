@@ -10,6 +10,7 @@ final class HistoryTransaction: Identifiable {
     var amountText: String
     var merchant: String
     var date: Date
+    var category: ExpenseCategory
     var isIncluded: Bool
     let isFailed: Bool
     /// True when two OCR passes read this row's amount differently.
@@ -36,6 +37,7 @@ final class HistoryTransaction: Identifiable {
         }
         merchant = result.merchant ?? ""
         date = result.date ?? defaultDate
+        category = MerchantCategorizer.heuristic(for: result.merchant) ?? .other
         isFailed = result.isFailed
         needsReview = result.needsReview
         altAmount = result.altAmount
@@ -144,13 +146,14 @@ final class HistoryImportViewModel {
             let expense = Expense(
                 amount: amount,
                 merchant: merchant,
-                category: .other,
+                category: row.category,
                 date: row.date,
                 source: .ocr,
                 isVerified: true,
                 confidence: row.confidence
             )
             toInsert.append(expense)
+            expenseService.rememberCategory(for: merchant, category: row.category)
         }
 
         let skipped = expenseService.createIfMissing(toInsert)
