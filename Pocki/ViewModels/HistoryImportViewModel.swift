@@ -41,6 +41,7 @@ final class HistoryTransaction: Identifiable {
 /// State for importing a whole UPI transaction-history screenshot as
 /// multiple expenses. Every row is reviewed before anything is saved.
 @MainActor
+@Observable
 final class HistoryImportViewModel {
     private(set) var transactions: [HistoryTransaction] = []
     private(set) var sourceApp: UPIPaymentApp?
