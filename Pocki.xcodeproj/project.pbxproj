@@ -38,12 +38,14 @@
 		11930DB6EE0747448369F51A /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916936D0ED9140B8BCD0E791 /* MockData.swift */; };
 		4AEEB5291AE1437C9324BC59 /* PreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CDF2AD730141F99B8A8F15 /* PreviewContainer.swift */; };
 		A5817882E62C4253AF77F4AE /* AddExpenseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB3F66E928E4AF690C897F3 /* AddExpenseViewModel.swift */; };
+		79BD4B0325B7C8D884497B68 /* HistoryImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52ECB278EF3A2343803B5AB0 /* HistoryImportViewModel.swift */; };
 		D36B119583224A8B95BCA846 /* ExpenseDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC9D86B1EBE4D0F8C4F2834 /* ExpenseDetailViewModel.swift */; };
 		CCD637D833464CAC8685CB15 /* ExpensesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D963F65710E642FFB036FBD9 /* ExpensesViewModel.swift */; };
 		C5539B0DF59E45D4BB32ED1B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C55C98DCC954CF889661F9E /* HomeViewModel.swift */; };
 		89B2152E4F4E4383BB682D1A /* InsightsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3083BF75FFDD4BE58FA4345A /* InsightsViewModel.swift */; };
 		BB0AF99EF2AD4221BD51C283 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7404B8DC1E49A4B5A4B6CE /* SettingsViewModel.swift */; };
 		3AA9D56049BB46B09E1CF007 /* AddExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB25E2FA15B4ACFA94825C4 /* AddExpenseView.swift */; };
+		FA06877007BE957E7A385237 /* HistoryImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12A338F49EB079F2700CF71E /* HistoryImportView.swift */; };
 		F0E4A3652A49426B89D5C01D /* ExpenseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9D8D57FF8A415594031C00 /* ExpenseDetailView.swift */; };
 		4E8EA658D19F4DC6B77233FC /* ExpensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4CB96FE15D474CBEFA4BFC /* ExpensesView.swift */; };
 		B351E36D720F44E1ADA8ACB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31DF2C13F814990849B0D77 /* HomeView.swift */; };
@@ -85,12 +87,14 @@
 		916936D0ED9140B8BCD0E791 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		33CDF2AD730141F99B8A8F15 /* PreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewContainer.swift; sourceTree = "<group>"; };
 		3DB3F66E928E4AF690C897F3 /* AddExpenseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExpenseViewModel.swift; sourceTree = "<group>"; };
+		52ECB278EF3A2343803B5AB0 /* HistoryImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryImportViewModel.swift; sourceTree = "<group>"; };
 		ABC9D86B1EBE4D0F8C4F2834 /* ExpenseDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailViewModel.swift; sourceTree = "<group>"; };
 		D963F65710E642FFB036FBD9 /* ExpensesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesViewModel.swift; sourceTree = "<group>"; };
 		7C55C98DCC954CF889661F9E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		3083BF75FFDD4BE58FA4345A /* InsightsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsViewModel.swift; sourceTree = "<group>"; };
 		CB7404B8DC1E49A4B5A4B6CE /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		1EB25E2FA15B4ACFA94825C4 /* AddExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExpenseView.swift; sourceTree = "<group>"; };
+		12A338F49EB079F2700CF71E /* HistoryImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryImportView.swift; sourceTree = "<group>"; };
 		7A9D8D57FF8A415594031C00 /* ExpenseDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailView.swift; sourceTree = "<group>"; };
 		DF4CB96FE15D474CBEFA4BFC /* ExpensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesView.swift; sourceTree = "<group>"; };
 		D31DF2C13F814990849B0D77 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -214,6 +218,7 @@
 			isa = PBXGroup;
 			children = (
 				3DB3F66E928E4AF690C897F3 /* AddExpenseViewModel.swift */,
+				52ECB278EF3A2343803B5AB0 /* HistoryImportViewModel.swift */,
 				ABC9D86B1EBE4D0F8C4F2834 /* ExpenseDetailViewModel.swift */,
 				D963F65710E642FFB036FBD9 /* ExpensesViewModel.swift */,
 				7C55C98DCC954CF889661F9E /* HomeViewModel.swift */,
@@ -239,6 +244,7 @@
 			isa = PBXGroup;
 			children = (
 				1EB25E2FA15B4ACFA94825C4 /* AddExpenseView.swift */,
+				12A338F49EB079F2700CF71E /* HistoryImportView.swift */,
 				7A9D8D57FF8A415594031C00 /* ExpenseDetailView.swift */,
 				DF4CB96FE15D474CBEFA4BFC /* ExpensesView.swift */,
 			);
@@ -369,12 +375,14 @@
 				11930DB6EE0747448369F51A /* MockData.swift in Sources */,
 				4AEEB5291AE1437C9324BC59 /* PreviewContainer.swift in Sources */,
 				A5817882E62C4253AF77F4AE /* AddExpenseViewModel.swift in Sources */,
+				79BD4B0325B7C8D884497B68 /* HistoryImportViewModel.swift in Sources */,
 				D36B119583224A8B95BCA846 /* ExpenseDetailViewModel.swift in Sources */,
 				CCD637D833464CAC8685CB15 /* ExpensesViewModel.swift in Sources */,
 				C5539B0DF59E45D4BB32ED1B /* HomeViewModel.swift in Sources */,
 				89B2152E4F4E4383BB682D1A /* InsightsViewModel.swift in Sources */,
 				BB0AF99EF2AD4221BD51C283 /* SettingsViewModel.swift in Sources */,
 				3AA9D56049BB46B09E1CF007 /* AddExpenseView.swift in Sources */,
+				FA06877007BE957E7A385237 /* HistoryImportView.swift in Sources */,
 				F0E4A3652A49426B89D5C01D /* ExpenseDetailView.swift in Sources */,
 				4E8EA658D19F4DC6B77233FC /* ExpensesView.swift in Sources */,
 				B351E36D720F44E1ADA8ACB9 /* HomeView.swift in Sources */,

@@ -12,6 +12,7 @@ struct AddExpenseView: View {
     @State private var viewModel: AddExpenseViewModel?
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var showFileImporter = false
+    @State private var showHistoryImport = false
     @FocusState private var amountFocused: Bool
 
     var body: some View {
@@ -186,7 +187,32 @@ struct AddExpenseView: View {
                 .buttonStyle(.plain)
                 .disabled(viewModel.isScanningScreenshot)
                 .accessibilityLabel("Choose screenshot from Files")
+
+                Divider()
+                    .overlay(Color.primary.opacity(0.08))
+
+                Button {
+                    showHistoryImport = true
+                } label: {
+                    Label("Import today's history", systemImage: "list.bullet.rectangle.portrait")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .foregroundStyle(Color.pockiAccent)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.pockiAccent.opacity(0.12))
+                        )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Import today's transaction history")
             }
+        }
+        .sheet(isPresented: $showHistoryImport) {
+            HistoryImportView()
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(28)
         }
     }
 
