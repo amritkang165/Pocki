@@ -16,6 +16,34 @@ final class ExpenseService {
         save()
     }
 
+    /// Inserts a batch of expenses, skipping any that already exist in the store
+    /// (same amount, same merchant, same calendar day). Returns how many were
+    /// skipped so callers can tell the user what happened.
+    @discardableResult
+    func createIfMissing(_ expenses: [Expense]) -> Int {
+        guard !expenses.isEmpty else { return 0 }
+
+        var existing = (try? modelContext.fetch(FetchDescriptor<Expense>())) ?? []
+        var skipped = 0
+
+        for expense in expenses {
+            let isDuplicate = existing.contains { candidate in
+                abs(candidate.amount - expense.amount) < 0.005
+                    && candidate.merchant.lowercased() == expense.merchant.lowercased()
+                    && Calendar.current.isDate(candidate.date, inSameDayAs: expense.date)
+            }
+            if isDuplicate {
+                skipped += 1
+            } else {
+                modelContext.insert(expense)
+                existing.append(expense)
+            }
+        }
+
+        save()
+        return skipped
+    }
+
     /// Updates an existing expense and stamps `updatedAt`.
     func update(_ expense: Expense) {
         expense.updatedAt = .now

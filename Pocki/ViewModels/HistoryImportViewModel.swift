@@ -120,13 +120,15 @@ final class HistoryImportViewModel {
         transactions.removeAll { $0 === transaction }
     }
 
-    /// Saves every included row as its own expense. Saving after review
-    /// counts as verification for OCR entries.
+    /// Saves every included row as its own expense, skipping rows that already
+    /// exist (same amount + merchant + day). Saving after review counts as
+    /// verification for OCR entries. Returns how many were actually saved.
     @discardableResult
-    func saveAll() -> Bool {
+    func saveAll() -> Int {
         let rows = includedTransactions
-        guard !rows.isEmpty else { return false }
+        guard !rows.isEmpty else { return 0 }
 
+        var toInsert: [Expense] = []
         for row in rows {
             guard let amount = row.amount else { continue }
             let merchant = row.merchant.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -141,10 +143,22 @@ final class HistoryImportViewModel {
                 isVerified: true,
                 confidence: row.confidence
             )
-            expenseService.create(expense)
+            toInsert.append(expense)
         }
 
-        HapticService.success()
-        return true
+        let skipped = expenseService.createIfMissing(toInsert)
+        let saved = toInsert.count - skipped
+
+        if saved == 0 {
+            statusMessage = "Everything is already in your expenses — nothing new saved."
+            HapticService.warning()
+        } else {
+            statusMessage = saved == 1 ? "Saved 1 expense" : "Saved \(saved) expenses"
+            if skipped > 0 {
+                statusMessage! += " · skipped \(skipped) already-existing"
+            }
+            HapticService.success()
+        }
+        return saved
     }
 }

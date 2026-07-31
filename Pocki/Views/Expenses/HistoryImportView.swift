@@ -162,6 +162,13 @@ struct HistoryImportView: View {
             VStack(spacing: 20) {
                 summaryCard(viewModel)
 
+                if let status = viewModel.statusMessage {
+                    Text(status)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+
                 ForEach(viewModel.transactions.filter { !$0.isFailed }) { transaction in
                     transactionRow(transaction)
                 }
@@ -190,7 +197,7 @@ struct HistoryImportView: View {
                     title: "Save \(viewModel.includedTransactions.count) expense\(viewModel.includedTransactions.count == 1 ? "" : "s")",
                     isEnabled: viewModel.isValid
                 ) {
-                    if viewModel.saveAll() {
+                    if viewModel.saveAll() > 0 {
                         dismiss()
                     }
                 }
