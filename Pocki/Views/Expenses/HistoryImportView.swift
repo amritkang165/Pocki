@@ -155,8 +155,22 @@ struct HistoryImportView: View {
             VStack(spacing: 20) {
                 summaryCard(viewModel)
 
-                ForEach(viewModel.transactions) { transaction in
+                ForEach(viewModel.transactions.filter { !$0.isFailed }) { transaction in
                     transactionRow(transaction)
+                }
+
+                if !viewModel.failedTransactions.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Label("Failed", systemImage: "xmark.octagon.fill")
+                            .font(.headline)
+                            .foregroundStyle(.red)
+                        Text("These didn’t go through — they won’t be saved unless you check them.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        ForEach(viewModel.failedTransactions) { transaction in
+                            transactionRow(transaction)
+                        }
+                    }
                 }
 
                 Button("Start over") {
@@ -184,7 +198,7 @@ struct HistoryImportView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Found \(viewModel.transactions.count) transactions")
                     .font(.headline)
-                Text("\(viewModel.sourceApp?.displayName ?? "UPI") · \(viewModel.includedTransactions.count) to save · \(viewModel.includedTransactions.count == 0 ? "₹0" : currencySymbol + String(format: "%.0f", viewModel.includedTotal))")
+                Text("\(viewModel.sourceApp?.displayName ?? "UPI") · \(viewModel.includedTransactions.count) to save\(viewModel.failedTransactions.isEmpty ? "" : " · \(viewModel.failedTransactions.count) failed") · \(viewModel.includedTransactions.count == 0 ? "₹0" : currencySymbol + String(format: "%.0f", viewModel.includedTotal))")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 Text("Check each row — edit anything wrong, remove what's not yours.")
@@ -224,6 +238,11 @@ struct HistoryImportView: View {
                         }
 
                         HStack(spacing: 8) {
+                            if transaction.isFailed {
+                                Label("Failed", systemImage: "xmark.octagon.fill")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.red)
+                            }
                             Label(transaction.date.formatted(date: .abbreviated, time: .shortened),
                                   systemImage: "clock")
                                 .font(.caption)

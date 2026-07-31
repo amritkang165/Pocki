@@ -10,7 +10,8 @@ final class HistoryTransaction: Identifiable {
     var amountText: String
     var merchant: String
     var date: Date
-    var isIncluded: Bool = true
+    var isIncluded: Bool
+    let isFailed: Bool
     let confidence: Double
 
     var amount: Double? {
@@ -31,6 +32,8 @@ final class HistoryTransaction: Identifiable {
         }
         merchant = result.merchant ?? ""
         date = result.date ?? defaultDate
+        isFailed = result.isFailed
+        isIncluded = !result.isFailed
         confidence = result.confidence
     }
 }
@@ -54,6 +57,10 @@ final class HistoryImportViewModel {
 
     var includedTransactions: [HistoryTransaction] {
         transactions.filter(\.isIncluded)
+    }
+
+    var failedTransactions: [HistoryTransaction] {
+        transactions.filter(\.isFailed)
     }
 
     var includedTotal: Double {
@@ -81,7 +88,8 @@ final class HistoryImportViewModel {
                 statusMessage = "Couldn’t find any transactions — try the receipt screenshot instead."
                 HapticService.warning()
             } else {
-                statusMessage = "\(transactions.count) transaction\(transactions.count == 1 ? "" : "s") found — review each row."
+                let failed = failedTransactions.count
+                statusMessage = "\(transactions.count) transaction\(transactions.count == 1 ? "" : "s") found\(failed == 0 ? "" : " · \(failed) failed") — review each row."
                 HapticService.success()
             }
         } catch {
