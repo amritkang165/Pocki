@@ -22,6 +22,8 @@ struct HomeView: View {
                         VStack(alignment: .leading, spacing: Constants.Layout.sectionSpacing) {
                             header(viewModel)
 
+                            monthStepper(viewModel)
+
                             BudgetCard(
                                 spent: viewModel.monthSpent,
                                 budget: viewModel.budget,
@@ -73,6 +75,46 @@ struct HomeView: View {
         }
         .padding(.top, 8)
         .accessibilityElement(children: .combine)
+    }
+
+    private func monthStepper(_ viewModel: HomeViewModel) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                HapticService.selection()
+                viewModel.goToPreviousMonth()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.pockiAccent)
+                    .frame(width: 32, height: 32)
+                    .background(Color.pockiAccent.opacity(0.12), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Previous month")
+
+            Spacer()
+
+            Text(viewModel.monthLabel)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
+
+            Spacer()
+
+            Button {
+                HapticService.selection()
+                viewModel.goToNextMonth()
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.pockiAccent)
+                    .frame(width: 32, height: 32)
+                    .background(Color.pockiAccent.opacity(0.12), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .disabled(!viewModel.canGoToNextMonth)
+            .opacity(viewModel.canGoToNextMonth ? 1 : 0.3)
+            .accessibilityLabel("Next month")
+        }
     }
 
     private func statsGrid(_ viewModel: HomeViewModel) -> some View {
