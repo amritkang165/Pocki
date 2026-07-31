@@ -14,6 +14,7 @@
 		0BBB924039394B0388F66B80 /* ProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C9B2CE098A4E689CFB6303 /* ProgressRing.swift */; };
 		11930DB6EE0747448369F51A /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916936D0ED9140B8BCD0E791 /* MockData.swift */; };
 		2050B1610144414DB363E28D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3ADA5C746A49998DF0F3CF /* Constants.swift */; };
+		1A2B3C4D5E6F708192A3B4C5 /* MerchantCategorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9D0E1F2A3B4C5D6E7F8 /* MerchantCategorizer.swift */; };
 		2607AB00814945E8BD724B32 /* ScreenshotOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CF7CC9D3041F29036CC0E /* ScreenshotOCRService.swift */; };
 		2E72F1CD385A451197C41042 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3262D71F6FA44304893A3960 /* AppSettings.swift */; };
 		31C20390B20C4BC2855C00D8 /* BudgetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C81459AD8495BB3DAA629 /* BudgetCard.swift */; };
@@ -29,7 +30,6 @@
 		6F438A4A2A7E4679AF121E47 /* OCRParseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC36E05B2E71446080379C9C /* OCRParseResult.swift */; };
 		79BD4B0325B7C8D884497B68 /* HistoryImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52ECB278EF3A2343803B5AB0 /* HistoryImportViewModel.swift */; };
 		89B2152E4F4E4383BB682D1A /* InsightsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3083BF75FFDD4BE58FA4345A /* InsightsViewModel.swift */; };
-		8AC95746301D2261005ED49D /* Screenshot 2026-07-30 at 12.08.50 AM.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AC95745301D2261005ED49D /* Screenshot 2026-07-30 at 12.08.50 AM.png */; };
 		8CC08E3E04F54A8EB8D51072 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD14D262FDA44D1D8A0AAB68 /* SectionHeader.swift */; };
 		938CCD74813143CB9B120A77 /* Double+Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ACB3698A6340B580DDB2B9 /* Double+Currency.swift */; };
 		949F7316A4914600829B9606 /* ExpenseRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0B26483AB40008E608FDB /* ExpenseRow.swift */; };
@@ -41,6 +41,7 @@
 		BAA4FC37A37342F89AEB6901 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91A312651F41A09C31FA9A /* LoadingView.swift */; };
 		BB0AF99EF2AD4221BD51C283 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7404B8DC1E49A4B5A4B6CE /* SettingsViewModel.swift */; };
 		C2EFD6A706E04B6793B340D6 /* BudgetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A106EC31E8468586AEE214 /* BudgetService.swift */; };
+		C4B5A69788C5D4E3F2A1B0C9 /* MerchantCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F8E7D6C5B4A3F2E1D0C9B8 /* MerchantCategory.swift */; };
 		C5539B0DF59E45D4BB32ED1B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C55C98DCC954CF889661F9E /* HomeViewModel.swift */; };
 		C593C4178C4C44C298B05748 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F693FBCD0F004B82993B730B /* MainTabView.swift */; };
 		C8E15B396A1C46DC89C29609 /* ExpenseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3763070205094264BA9A6F09 /* ExpenseService.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		09F8E7D6C5B4A3F2E1D0C9B8 /* MerchantCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MerchantCategory.swift; sourceTree = "<group>"; };
 		0C26BDA394FD47A9B315CCC5 /* ExpenseSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseSource.swift; sourceTree = "<group>"; };
 		12A338F49EB079F2700CF71E /* HistoryImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryImportView.swift; sourceTree = "<group>"; };
 		14C9B2CE098A4E689CFB6303 /* ProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRing.swift; sourceTree = "<group>"; };
@@ -82,10 +84,10 @@
 		7B3EC219EEE548E8B1F52A58 /* HapticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticService.swift; sourceTree = "<group>"; };
 		7C55C98DCC954CF889661F9E /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		8A91A312651F41A09C31FA9A /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		8AC95745301D2261005ED49D /* Screenshot 2026-07-30 at 12.08.50 AM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Screenshot 2026-07-30 at 12.08.50 AM.png"; sourceTree = "<group>"; };
 		916936D0ED9140B8BCD0E791 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		A2ACB3698A6340B580DDB2B9 /* Double+Currency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Currency.swift"; sourceTree = "<group>"; };
 		A6D475A4AA7A4230A2187B46 /* UPIScreenshotParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UPIScreenshotParser.swift; sourceTree = "<group>"; };
+		A7B8C9D0E1F2A3B4C5D6E7F8 /* MerchantCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MerchantCategorizer.swift; sourceTree = "<group>"; };
 		ABC9D86B1EBE4D0F8C4F2834 /* ExpenseDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseDetailViewModel.swift; sourceTree = "<group>"; };
 		B3826F2E55F947F8B8ED6277 /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		B5F677C464A04E8BA738D38F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 				A6D475A4AA7A4230A2187B46 /* UPIScreenshotParser.swift */,
 				D5A106EC31E8468586AEE214 /* BudgetService.swift */,
 				3763070205094264BA9A6F09 /* ExpenseService.swift */,
+				A7B8C9D0E1F2A3B4C5D6E7F8 /* MerchantCategorizer.swift */,
 				D27A570A81CE4B1AB0486377 /* ExportService.swift */,
 				7B3EC219EEE548E8B1F52A58 /* HapticService.swift */,
 			);
@@ -259,7 +262,6 @@
 				225E0682E5774FD8BAA61BB8 /* ViewModels */,
 				2BBC19A909DA463DA781F7C6 /* Views */,
 				DE4CDE531F5141778E6C68E7 /* PockiApp.swift */,
-				8AC95745301D2261005ED49D /* Screenshot 2026-07-30 at 12.08.50 AM.png */,
 			);
 			path = Pocki;
 			sourceTree = "<group>";
@@ -271,6 +273,7 @@
 				3262D71F6FA44304893A3960 /* AppSettings.swift */,
 				67896E628EB746A2BE3973A5 /* Expense.swift */,
 				FCD669318F9A47B0AA3B3169 /* ExpenseCategory.swift */,
+				09F8E7D6C5B4A3F2E1D0C9B8 /* MerchantCategory.swift */,
 				0C26BDA394FD47A9B315CCC5 /* ExpenseSource.swift */,
 			);
 			path = Models;
@@ -335,7 +338,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FECEBE199EA4EC6964AC4BF /* Assets.xcassets in Resources */,
-				8AC95746301D2261005ED49D /* Screenshot 2026-07-30 at 12.08.50 AM.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +364,7 @@
 				938CCD74813143CB9B120A77 /* Double+Currency.swift in Sources */,
 				A4AC3D2D3AF642C8AED2A378 /* View+Extensions.swift in Sources */,
 				2E72F1CD385A451197C41042 /* AppSettings.swift in Sources */,
+				C4B5A69788C5D4E3F2A1B0C9 /* MerchantCategory.swift in Sources */,
 				A188A43F089D41B6A36B9A31 /* Expense.swift in Sources */,
 				4E47551E1B404FCDB8F4C98A /* ExpenseCategory.swift in Sources */,
 				F70CC1E8FA1444F2A8B3E7A7 /* ExpenseSource.swift in Sources */,
@@ -371,6 +374,7 @@
 				2607AB00814945E8BD724B32 /* ScreenshotOCRService.swift in Sources */,
 				32670FD252D941B4B792E4D0 /* UPIScreenshotParser.swift in Sources */,
 				C8E15B396A1C46DC89C29609 /* ExpenseService.swift in Sources */,
+				1A2B3C4D5E6F708192A3B4C5 /* MerchantCategorizer.swift in Sources */,
 				0830F8C0451B43208B51BB0D /* ExportService.swift in Sources */,
 				A624E45AEE2E4F8386E22D10 /* HapticService.swift in Sources */,
 				2050B1610144414DB363E28D /* Constants.swift in Sources */,

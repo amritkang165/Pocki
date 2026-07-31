@@ -7,7 +7,7 @@ struct PockiApp: App {
 
     init() {
         do {
-            let schema = Schema([Expense.self, AppSettings.self])
+            let schema = Schema([Expense.self, AppSettings.self, MerchantCategory.self])
             let configuration = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false
