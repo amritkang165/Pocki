@@ -1,10 +1,11 @@
 import Foundation
 
-/// One OCR text line with its vertical position (0…1, top to bottom).
-/// Preserves layout so parsers can use reading order, not just a flat blob.
+/// One OCR text line with its position (0…1). y is top-to-bottom, x is
+/// left-to-right, so parsers can reconstruct rows and columns.
 struct RecognizedLine: Sendable {
     let text: String
     let yPosition: Double
+    let xPosition: Double
 }
 
 /// Best-effort parser for UPI payment screenshot text.
@@ -44,27 +45,52 @@ enum UPIScreenshotParser {
         guard !ordered.isEmpty else { return [] }
         let app = detectApp(from: ordered)
         let headerDate = extractHeaderDate(from: ordered) ?? .now
+        let year = extractYear(from: lines)
 
-        // 1. Every amount token marks one transaction row.
-        let amountIndexes: [Int] = ordered.enumerated().compactMap { index, line in
-            extractAmount(from: line) != nil ? index : nil
+        struct AmountHit {
+            let value: Double
+            let hasSymbol: Bool
+            let y: Double
+            let x: Double
+            let text: String
         }
 
-        guard !amountIndexes.isEmpty else { return [] }
+        // 1. Every amount token marks one transaction row. Handles ₹/R/$/Rs/INR
+        // (OCR often reads ₹ as R or $, or drops it) and bare trailing numbers.
+        // Lines in the status bar (top ~6%) are never amounts.
+        let hits: [AmountHit] = lines.compactMap { line in
+            guard line.yPosition > 0.06 else { return nil }
+            guard let (value, hasSymbol) = extractRowAmount(from: line.text) else { return nil }
+            return AmountHit(value: value, hasSymbol: hasSymbol, y: line.yPosition, x: line.xPosition, text: line.text)
+        }
+        guard !hits.isEmpty else { return [] }
 
         var transactions: [OCRParseResult] = []
-        for (row, amountIndex) in amountIndexes.enumerated() {
-            let amount = extractAmount(from: ordered[amountIndex])
-            let merchant = historyMerchant(above: ordered, before: amountIndex, skipping: amountIndexes)
-            let date = transactionDate(from: ordered, headerDate: headerDate, amountIndex: amountIndex, row: row)
+        var row = 0
+
+        for hit in hits {
+            // 2. Merchant: same line to the left (column layout) → inline in one
+            //    observation → nearest plausible line above (stacked layout).
+            let merchant = sameRowMerchant(for: (y: hit.y, x: hit.x), lines: lines)
+                ?? inlineMerchant(in: hit.text)
+                ?? (hit.hasSymbol ? aboveMerchant(for: hit.y, lines: lines) : nil)
+
+            if isStatementChrome(merchant) { continue }
+            if isFailedNear(hit.y, lines: lines) { continue }
+            // Bare numbers without any merchant are ambiguous chrome, not rows.
+            if !hit.hasSymbol && merchant == nil { continue }
+
+            let date = nearestDate(for: hit.y, lines: lines, year: year, headerDate: headerDate, row: row)
+            row += 1
 
             var score = 0.5
-            if amount != nil { score += 0.15 }
+            score += 0.15
             if merchant != nil { score += 0.2 }
+            if date != headerDate { score += 0.05 }
             let confidence = min(score, 0.9)
 
             transactions.append(OCRParseResult(
-                amount: amount,
+                amount: hit.value,
                 merchant: merchant,
                 date: date,
                 confidence: confidence,
@@ -77,14 +103,191 @@ enum UPIScreenshotParser {
 
     // MARK: - History helpers
 
-    /// Looks above an amount for the nearest plausible merchant line,
-    /// stripping "paid to"/"to:" prefixes and trailing amounts. Never crosses
-    /// into the previous transaction's row.
-    private static func historyMerchant(above lines: [String], before amountIndex: Int, skipping amountIndexes: [Int]) -> String? {
-        for index in stride(from: amountIndex - 1, through: max(0, amountIndex - 5), by: -1) {
-            if amountIndexes.contains(index) { return nil }
-            if let merchant = historyMerchant(from: lines[index]) {
-                return merchant
+    /// Extracts a row amount, tolerating how OCR mangles ₹:
+    /// "R75", "$131", "₹250.00", "Rs. 250", "INR 5000" or bare "790" / "7334".
+    private static func extractRowAmount(from text: String) -> (value: Double, hasSymbol: Bool)? {
+        // 1. Symbol-prefixed. "R" only counts when directly before a digit
+        //    (so "Received" never matches).
+        let symbolPattern = #"(?:₹|\$|rs\.?|inr|\bR(?=[0-9]))\s*([0-9][0-9, ]*(?:\.[0-9]{1,2})?)"#
+        if let match = firstMatch(symbolPattern, in: text, group: 1),
+           let value = moneyValue(of: match) {
+            return (value, true)
+        }
+
+        // 2. Bare trailing number (column layouts print amounts without any symbol).
+        let barePattern = #"([0-9]{2,9}(?:[ ,][0-9]{2,3}){0,2}(?:\.[0-9]{1,2})?)\s*$"#
+        if let match = firstMatch(barePattern, in: text, group: 1),
+           let value = moneyValue(of: match) {
+            return (value, false)
+        }
+        return nil
+    }
+
+    /// Normalizes an OCR money token into a Double.
+    /// "48,944.90" → 48944.9 · "346 805 90" (spaced) → 346805.9 · "7334" → 7334.
+    private static func moneyValue(of raw: String) -> Double? {
+        let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return nil }
+
+        if trimmed.contains(".") {
+            return Double(trimmed.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: " ", with: ""))
+        }
+
+        let groups = trimmed.components(separatedBy: " ")
+        if groups.count > 1, let last = groups.last, last.count == 2,
+           let integer = Double(groups.dropLast().joined()),
+           let cents = Double(last) {
+            return integer + cents / 100
+        }
+
+        let compact = trimmed.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: " ", with: "")
+        guard let value = Double(compact), value > 0, value < 10_000_000 else { return nil }
+        return value
+    }
+
+    private static func firstMatch(_ pattern: String, in text: String, group: Int) -> String? {
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { return nil }
+        let range = NSRange(text.startIndex..., in: text)
+        guard let match = regex.firstMatch(in: text, options: [], range: range),
+              match.numberOfRanges > group,
+              let swiftRange = Range(match.range(at: group), in: text) else { return nil }
+        return String(text[swiftRange])
+    }
+
+    /// Column layout: merchant and amount are separate observations on the same
+    /// visual line, merchant to the left ("SWIGGY INSTAMART" + "$131").
+    private static func sameRowMerchant(for hit: (y: Double, x: Double), lines: [RecognizedLine]) -> String? {
+        var best: (merchant: String, dy: Double)?
+        for line in lines {
+            guard line.xPosition < hit.x - 0.001 else { continue }
+            let dy = abs(line.yPosition - hit.y)
+            guard dy < 0.012, let merchant = historyMerchant(from: line.text) else { continue }
+            if best == nil || dy < best!.dy {
+                best = (merchant, dy)
+            }
+        }
+        return best?.merchant
+    }
+
+    /// Merchant and amount in one observation: "You paid Metro Card ₹120.00".
+    private static func inlineMerchant(in text: String) -> String? {
+        let pattern = #"(?:₹|\$|rs\.?|inr|\bR(?=[0-9])|[0-9])\s*[0-9][0-9, .]*[0-9]\s*$"#
+        guard let range = text.range(of: pattern, options: [.regularExpression, .caseInsensitive]) else { return nil }
+        let before = text[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+        guard !before.isEmpty else { return nil }
+        return historyMerchant(from: before)
+    }
+
+    /// Stacked layout: amount on its own line, merchant on the line above.
+    private static func aboveMerchant(for y: Double, lines: [RecognizedLine]) -> String? {
+        var best: (merchant: String, dy: Double)?
+        for line in lines {
+            let dy = y - line.yPosition
+            guard dy > 0.012, dy <= 0.15, let merchant = historyMerchant(from: line.text) else { continue }
+            if best == nil || dy < best!.dy {
+                best = (merchant, dy)
+            }
+        }
+        return best?.merchant
+    }
+
+    /// Rows like "You spent ₹15,000 in July" or "Total spent" are statement
+    /// chrome, not transactions — skip them.
+    private static func isStatementChrome(_ merchant: String?) -> Bool {
+        guard let merchant else { return false }
+        let lower = merchant.lowercased()
+        let months = ["january", "february", "march", "april", "may", "june", "july",
+                      "august", "september", "october", "november", "december"]
+        let skipWords = ["total", "spent", "balance", "available", "limit", "statement",
+                         "summary", "month", "account", "payment method", "date", "status"] + months
+        return skipWords.contains { lower.contains($0) }
+    }
+
+    /// Failed rows carry a status like "Failed" just below the amount.
+    private static func isFailedNear(_ y: Double, lines: [RecognizedLine]) -> Bool {
+        let failedWords = ["failed", "cancelled", "canceled", "reversed", "unsuccessful", "declined", "refunded"]
+        return lines.contains { line in
+            let dy = line.yPosition - y
+            guard dy >= -0.03, dy <= 0.10 else { return false }
+            let lower = line.text.lowercased()
+            return failedWords.contains { lower.contains($0) }
+        }
+    }
+
+    /// Date for a row: the nearest "29 July" line (±0.12 in y) combined with the
+    /// header year; falls back to the header date when no row date exists.
+    private static func nearestDate(for y: Double, lines: [RecognizedLine], year: Int?, headerDate: Date, row: Int) -> Date {
+        var best: (date: Date, dy: Double)?
+        for line in lines {
+            let dy = abs(line.yPosition - y)
+            guard dy <= 0.12, let date = dayMonthDate(from: line.text, year: year) else { continue }
+            if best == nil || dy < best!.dy {
+                best = (date, dy)
+            }
+        }
+        if let best { return best.date }
+
+        // Stacked layouts: header day + nearest time on lines below.
+        var bestTime: (hour: Int, minute: Int)?
+        var bestTimeDy = Double.greatestFiniteMagnitude
+        for line in lines {
+            let dy = line.yPosition - y
+            guard dy > 0.005, dy <= 0.10, let time = extractTime(from: line.text) else { continue }
+            if dy < bestTimeDy {
+                bestTime = time
+                bestTimeDy = dy
+            }
+        }
+        if let bestTime {
+            return Calendar.current.date(bySettingHour: bestTime.hour, minute: bestTime.minute, second: 0, of: headerDate)
+                ?? headerDate
+        }
+        return Calendar.current.date(byAdding: .minute, value: -row * 5, to: headerDate) ?? headerDate
+    }
+
+    /// "29 July" (optionally with a year) → Date, using the header year if missing.
+    private static func dayMonthDate(from text: String, year: Int?) -> Date? {
+        let pattern = #"\b(\d{1,2})\s+([A-Za-z]{3,})(?:\s+(\d{4}))?\b"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { return nil }
+        let range = NSRange(text.startIndex..., in: text)
+        guard let match = regex.firstMatch(in: text, options: [], range: range),
+              match.numberOfRanges == 4,
+              let dayRange = Range(match.range(at: 1), in: text),
+              let monthRange = Range(match.range(at: 2), in: text),
+              let day = Int(text[dayRange]),
+              let month = monthNumber(String(text[monthRange])) else { return nil }
+
+        var yearValue = year
+        if match.range(at: 3).location != NSNotFound,
+           let yRange = Range(match.range(at: 3), in: text) {
+            yearValue = Int(text[yRange])
+        }
+        guard let yearValue else { return nil }
+
+        var components = DateComponents()
+        components.year = yearValue
+        components.month = month
+        components.day = day
+        components.hour = 12
+        return Calendar.current.date(from: components)
+    }
+
+    private static func monthNumber(_ name: String) -> Int? {
+        let lower = name.lowercased()
+        let months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+        for (index, prefix) in months.enumerated() where lower.hasPrefix(prefix) {
+            return index + 1
+        }
+        return nil
+    }
+
+    /// A "2026" year label near the top of a statement.
+    private static func extractYear(from lines: [RecognizedLine]) -> Int? {
+        for line in lines where line.yPosition < 0.3 {
+            let pattern = #"\b(20\d{2})\b"#
+            if let range = line.text.range(of: pattern, options: .regularExpression),
+               let value = Int(line.text[range]) {
+                return value
             }
         }
         return nil
@@ -93,6 +296,22 @@ enum UPIScreenshotParser {
     private static func historyMerchant(from line: String) -> String? {
         let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
         let lower = trimmed.lowercased()
+
+        // "You paid Chai Point" / "Paid to Zomato" / "To: Jio" → strip the verb.
+        let stripped = trimmed.replacingOccurrences(
+            of: #"^(you\s+)?(paid|sent|pay|recharged|spent)\s*(to\s+)?(via\s+)?"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        ).replacingOccurrences(
+            of: #"^to\s*:?\s+"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        let cleanedStripped = cleanMerchant(stripped)
+        if !cleanedStripped.isEmpty, isPlausibleMerchant(cleanedStripped) {
+            return cleanedStripped
+        }
+
         if let keyword = historyKeywords.first(where: { lower.contains($0) }) {
             guard let range = trimmed.range(of: keyword, options: [.caseInsensitive]) else { return nil }
             let after = trimmed[range.upperBound...]

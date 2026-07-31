@@ -58,7 +58,12 @@ enum ScreenshotOCRService {
                     guard let candidate = observation.topCandidates(1).first else { return nil }
                     // Vision's boundingBox is normalized with origin at bottom-left.
                     let yFromTop = 1.0 - Double(observation.boundingBox.midY)
-                    return RecognizedLine(text: candidate.string, yPosition: yFromTop)
+                    let xFromLeft = Double(observation.boundingBox.midX)
+                    return RecognizedLine(
+                        text: candidate.string,
+                        yPosition: yFromTop,
+                        xPosition: xFromLeft
+                    )
                 }
                 continuation.resume(returning: lines)
             }
