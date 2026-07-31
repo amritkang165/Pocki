@@ -476,7 +476,7 @@ open Pocki.xcodeproj
 
 #### v1.1 — Screenshot intake (the unique feature)
 
-**In progress in the app:** photo picker + on-device Vision OCR + UPI parser + review-before-save.
+**Shipped in v1.1:** photo picker + on-device Vision OCR + UPI parser + review-before-save + history import with a failed-transaction column.
 
 | Add | Details | Status |
 | --- | --- | :---: |
@@ -484,6 +484,7 @@ open Pocki.xcodeproj
 | On-device OCR | Apple Vision text recognition | ✅ |
 | Multi-app parser | Per-app layout parsing (GPay / PhonePe / Paytm / BHIM) | ✅ |
 | History screenshot | One history list → many expenses, review each | ✅ |
+| Failed-transaction column | Failed rows kept separately, flagged & excluded from save | ✅ |
 | Review before save | Prefills form; user confirms | ✅ |
 | Confidence + verify | `confidence` shown; `isVerified` on save | ✅ |
 | Source tagging | Saves with `ExpenseSource.ocr` | ✅ |
@@ -547,7 +548,7 @@ open Pocki.xcodeproj
 
 ```text
   v1.0   ✅  Manual tracking · budget · insights · settings
-  v1.1   ◐   Any UPI screenshot → OCR → confirm → save · history import
+  v1.1   ✅  Any UPI screenshot → OCR → confirm → save · history import · failed column
   v1.2   ▢   Smart categories · filters · duplicates · top-places insights
   v1.3   ▢   CSV / PDF export · Share Extension
   v2.0   ▢   Widgets · Live Activities · budget alerts

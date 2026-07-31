@@ -111,7 +111,7 @@ flowchart LR
 |  |  |
 | :--- | :--- |
 | 📸 **Screenshot → expense** | Pick a UPI screenshot from **Photos or Files** → on-device OCR prefills amount, merchant & date → **you review**, then save |
-| 📋 **History import** | Share the app's **today list** → every row becomes an editable expense → save all at once |
+| 📋 **History import** | Drop a **transaction-history** screenshot → every row becomes an editable expense → **failed** ones land in their own column (excluded from save) → save all at once |
 | 🎯 **Monthly budget** | Set a budget · live ring on Home · remaining · daily average |
 | 🗂 **Categories** | Colour-coded categories per expense · quick picker in Add |
 | 📊 **Insights** | Weekly & monthly charts · category breakdown · top merchants · trend vs last month |
@@ -139,15 +139,15 @@ Every expense stores `source` (manual / OCR) · `isVerified` · `confidence`.
 ## Status
 
 ```text
-  [████████████████████░░░░]  v1.0 shipped
-  [████████░░░░░░░░░░░░░░░░]  v1.1 UPI screenshot OCR  ← in app now
+  [████████████████████████]  v1.0 shipped
+  [████████████████████████]  v1.1 UPI screenshot OCR  ← shipped
 ```
 
-| Version | What to add |
+| Version | What's in it |
 | :---: | :--- |
-| **v1.0** ✅ | Manual tracking · budget ring · insights · settings |
-| **v1.1** ◐ | **Any UPI screenshot** → on-device OCR → confirm → save *(live in Add Expense)* |
-| **v1.2** | Smart categories · filters · duplicate warnings |
+| **v1.0** ✅ | Manual tracking · monthly budget ring · categories · insights · settings |
+| **v1.1** ✅ | **Any UPI screenshot** → on-device OCR → review → save · **history import** (one list → many expenses) · **failed-transaction column** |
+| **v1.2** | Smart categories · filters · duplicate warnings · merchant memory |
 | **v1.3** | CSV / PDF export · Share Extension |
 | **v2.0** | Widgets · Live Activities · optional budget alerts |
 | **v2.1** | CloudKit sync · multi-wallet · recurring expenses |
