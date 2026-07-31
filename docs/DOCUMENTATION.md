@@ -476,16 +476,18 @@ open Pocki.xcodeproj
 
 #### v1.1 — Screenshot intake (the unique feature)
 
-The first big upgrade after manual tracking.
+**In progress in the app:** photo picker + on-device Vision OCR + UPI parser + review-before-save.
 
-| Add | Details |
-| --- | --- |
-| Pick / drop UPI screenshot | Photos picker + drag-and-drop into Add flow |
-| On-device OCR | Extract **amount**, **merchant**, **date/time** |
-| Multi-app parsers | Heuristics for GPay, PhonePe, Paytm, BHIM, Amazon Pay, generic UPI |
-| Review before save | Prefill Add Expense sheet; user confirms / edits |
-| Confidence + verify | Fill `confidence`; set `isVerified` after user OK |
-| Source tagging | Save with `ExpenseSource.ocr` |
+| Add | Details | Status |
+| --- | --- | :---: |
+| Pick UPI screenshot | Photos picker on Add Expense | ✅ |
+| On-device OCR | Apple Vision text recognition | ✅ |
+| Multi-app parser | Generic UPI heuristics (GPay / PhonePe / Paytm / BHIM-friendly) | ✅ early |
+| Review before save | Prefills form; user confirms | ✅ |
+| Confidence + verify | `confidence` shown; `isVerified` on save | ✅ |
+| Source tagging | Saves with `ExpenseSource.ocr` | ✅ |
+| Per-app layout tuning | Dedicated parsers per UPI app | 🔜 |
+| Share Extension | Share screenshot from Photos | 🔜 |
 
 ```text
   Photos / Files  →  OCR service  →  prefilled form  →  user confirms  →  expense

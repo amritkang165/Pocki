@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 /// Bottom sheet form for creating or editing an expense.
 struct AddExpenseView: View {
@@ -9,6 +10,8 @@ struct AddExpenseView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var viewModel: AddExpenseViewModel?
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showFileImporter = false
     @FocusState private var amountFocused: Bool
 
     var body: some View {
@@ -33,7 +36,25 @@ struct AddExpenseView: View {
         .onAppear {
             bootstrapIfNeeded()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                amountFocused = true
+                if viewModel?.screenshotImage == nil {
+                    amountFocused = true
+                }
+            }
+        }
+        .onChange(of: selectedPhoto) { _, newItem in
+            guard let newItem, let viewModel else { return }
+            Task {
+                await loadPhoto(newItem, into: viewModel)
+            }
+        }
+        .fileImporter(
+            isPresented: $showFileImporter,
+            allowedContentTypes: [.image, .png, .jpeg, .heic, .webP],
+            allowsMultipleSelection: false
+        ) { result in
+            guard let viewModel else { return }
+            Task {
+                await loadFile(result, into: viewModel)
             }
         }
     }
@@ -41,15 +62,23 @@ struct AddExpenseView: View {
     private func formContent(_ viewModel: AddExpenseViewModel) -> some View {
         ScrollView {
             VStack(spacing: 20) {
+                if viewModel.showsScreenshotImport {
+                    screenshotImportCard(viewModel)
+                }
+
                 amountField(viewModel)
                 merchantField(viewModel)
                 categoryPicker(viewModel)
                 datePicker(viewModel)
                 notesField(viewModel)
 
+                if viewModel.source == .ocr, let confidence = viewModel.confidence {
+                    ocrMetaCard(confidence: confidence)
+                }
+
                 PrimaryButton(
                     title: viewModel.saveTitle,
-                    isEnabled: viewModel.isValid
+                    isEnabled: viewModel.isValid && !viewModel.isScanningScreenshot
                 ) {
                     if viewModel.save() {
                         dismiss()
@@ -62,6 +91,124 @@ struct AddExpenseView: View {
         }
         .scrollDismissesKeyboard(.interactively)
     }
+
+    // MARK: - Screenshot import
+
+    private func screenshotImportCard(_ viewModel: AddExpenseViewModel) -> some View {
+        GlassCard(padding: 16) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 10) {
+                    Image(systemName: "text.viewfinder")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(Color.pockiAccent)
+                        .frame(width: 36, height: 36)
+                        .background(Color.pockiAccent.opacity(0.12), in: Circle())
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("From UPI screenshot")
+                            .font(.headline)
+                        Text("GPay · PhonePe · Paytm · BHIM · any UPI")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                if let image = viewModel.screenshotImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 140)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(alignment: .topTrailing) {
+                            Button {
+                                viewModel.clearScreenshot()
+                                selectedPhoto = nil
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(.white, .black.opacity(0.45))
+                                    .font(.title2)
+                                    .padding(8)
+                            }
+                            .accessibilityLabel("Remove screenshot")
+                        }
+                }
+
+                if viewModel.isScanningScreenshot {
+                    HStack(spacing: 10) {
+                        ProgressView()
+                        Text(viewModel.screenshotStatusMessage ?? "Reading…")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                } else if let error = viewModel.screenshotErrorMessage {
+                    Text(error)
+                        .font(.subheadline)
+                        .foregroundStyle(.red)
+                } else if let status = viewModel.screenshotStatusMessage {
+                    Text(status)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                PhotosPicker(
+                    selection: $selectedPhoto,
+                    matching: .images,
+                    photoLibrary: .shared()
+                ) {
+                    Label("Photos", systemImage: "photo.on.rectangle.angled")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .foregroundStyle(Color.pockiAccent)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.pockiAccent.opacity(0.12))
+                        )
+                }
+                .disabled(viewModel.isScanningScreenshot)
+                .accessibilityLabel("Choose screenshot from Photos")
+
+                Button {
+                    showFileImporter = true
+                } label: {
+                    Label("Files", systemImage: "folder")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .foregroundStyle(Color.pockiAccent)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.pockiAccent.opacity(0.12))
+                        )
+                }
+                .buttonStyle(.plain)
+                .disabled(viewModel.isScanningScreenshot)
+                .accessibilityLabel("Choose screenshot from Files")
+            }
+        }
+    }
+
+    private func importSourceButtons(spacing unused: CGFloat = 0) -> some View {
+        EmptyView()
+    }
+
+    private func ocrMetaCardOLD_REMOVE(confidence: Double) -> some View {
+        GlassCard(padding: 14) {
+            HStack {
+                Label("OCR confidence", systemImage: "waveform.badge.magnifyingglass")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("\(Int(confidence * 100))%")
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(Color.pockiAccent)
+            }
+        }
+    }
+
+    // MARK: - Fields
 
     private func amountField(_ viewModel: AddExpenseViewModel) -> some View {
         GlassCard {
@@ -176,6 +323,8 @@ struct AddExpenseView: View {
         }
     }
 
+    // MARK: - Helpers
+
     private var currencySymbol: String {
         let code = (try? modelContext.fetch(FetchDescriptor<AppSettings>()).first?.currencyCode) ?? "USD"
         let locale = Locale.availableIdentifiers
@@ -190,6 +339,20 @@ struct AddExpenseView: View {
             expenseService: ExpenseService(modelContext: modelContext),
             editingExpense: editingExpense
         )
+    }
+
+    private func loadPhoto(_ item: PhotosPickerItem, into viewModel: AddExpenseViewModel) async {
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self),
+                  let image = UIImage(data: data) else {
+                viewModel.screenshotErrorMessage = "Could not load that photo."
+                return
+            }
+            amountFocused = false
+            await viewModel.importScreenshot(image)
+        } catch {
+            viewModel.screenshotErrorMessage = error.localizedDescription
+        }
     }
 }
 

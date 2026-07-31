@@ -95,19 +95,44 @@ flowchart LR
 
 ```text
   [████████████████████░░░░]  v1.0 shipped
-  [░░░░░░░░░░░░░░░░░░░░░░░░]  v1.1 UPI screenshot OCR  ← next
+  [████████░░░░░░░░░░░░░░░░]  v1.1 UPI screenshot OCR  ← in app now
 ```
 
 | Version | What to add |
 | :---: | :--- |
 | **v1.0** ✅ | Manual tracking · budget ring · insights · settings |
-| **v1.1** | **Any UPI screenshot** → on-device OCR → confirm → save |
+| **v1.1** ◐ | **Any UPI screenshot** → on-device OCR → confirm → save *(live in Add Expense)* |
 | **v1.2** | Smart categories · filters · duplicate warnings |
 | **v1.3** | CSV / PDF export · Share Extension |
 | **v2.0** | Widgets · Live Activities · optional budget alerts |
 | **v2.1** | CloudKit sync · multi-wallet · recurring expenses |
 
 Full breakdown → **[docs/DOCUMENTATION.md §19](docs/DOCUMENTATION.md#19-roadmap--future-architecture)**
+
+---
+
+## See it work
+
+```text
+  ╭──────────────────────────────╮          ╭──────────────────────────────────╮
+  │ UPI · GPay          ● Success │          │ Add Expense · prefilled by OCR     │
+  │                              │          │                                    │
+  │ Paid to                      │          │ From UPI screenshot         ✓      │
+  │   Chai Point                 │          │                                    │
+  │ UPI ID · 9912xxxx@upi        │          │ Amount     ₹ 250.00                │
+  │                              │          │ Merchant   Chai Point              │
+  │           ₹ 250.00           │          │ Category   Food & Drink            │
+  │        12 Aug · 2:14 PM      │          │ Date       Today · 2:14 PM         │
+  │                              │          │ Confidence 92%                     │
+  │       ✓ Payment successful   │          │                                    │
+  ╰──────────────────────────────╯          │         [ Review & Save ]          │
+          ╰──────────────────────────────────╯
+
+                 └──────────────────────────────────────▲
+                 OCR · on device
+```
+
+Screenshot → prefilled form → **you** review → save. Nothing is saved until you confirm.
 
 ---
 
