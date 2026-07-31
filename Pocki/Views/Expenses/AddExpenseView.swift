@@ -209,11 +209,8 @@ struct AddExpenseView: View {
                 .accessibilityLabel("Import today's transaction history")
             }
         }
-        .sheet(isPresented: $showHistoryImport) {
+        .fullScreenCover(isPresented: $showHistoryImport) {
             HistoryImportView(initialImage: pendingHistoryImage)
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(28)
         }
     }
 
@@ -380,6 +377,7 @@ struct AddExpenseView: View {
             let isHistory = await viewModel.importScreenshot(image)
             if isHistory {
                 pendingHistoryImage = image
+                viewModel.screenshotStatusMessage = nil
                 showHistoryImport = true
             }
         } catch {
@@ -403,6 +401,7 @@ struct AddExpenseView: View {
             let isHistory = await viewModel.importScreenshot(image)
             if isHistory {
                 pendingHistoryImage = image
+                viewModel.screenshotStatusMessage = nil
                 showHistoryImport = true
             }
         } catch {
