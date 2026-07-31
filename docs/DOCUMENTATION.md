@@ -482,15 +482,16 @@ open Pocki.xcodeproj
 | --- | --- | :---: |
 | Pick UPI screenshot | Photos picker on Add Expense | ✅ |
 | On-device OCR | Apple Vision text recognition | ✅ |
-| Multi-app parser | Generic UPI heuristics (GPay / PhonePe / Paytm / BHIM-friendly) | ✅ early |
+| Multi-app parser | Per-app layout parsing (GPay / PhonePe / Paytm / BHIM) | ✅ |
+| History screenshot | One history list → many expenses, review each | ✅ |
 | Review before save | Prefills form; user confirms | ✅ |
 | Confidence + verify | `confidence` shown; `isVerified` on save | ✅ |
 | Source tagging | Saves with `ExpenseSource.ocr` | ✅ |
-| Per-app layout tuning | Dedicated parsers per UPI app | 🔜 |
 | Share Extension | Share screenshot from Photos | 🔜 |
 
 ```text
-  Photos / Files  →  OCR service  →  prefilled form  →  user confirms  →  expense
+  Photos / Files  →  OCR service  →  single expense (receipt)  →  user confirms  →  save
+                  →  OCR service  →  many expenses (history)   →  review rows   →  save all
 ```
 
 #### v1.2 — Smarter tracking
@@ -546,8 +547,8 @@ open Pocki.xcodeproj
 
 ```text
   v1.0   ✅  Manual tracking · budget · insights · settings
-  v1.1   ▢   Any UPI screenshot → OCR → confirm → save
-  v1.2   ▢   Smart categories · filters · duplicates
+  v1.1   ◐   Any UPI screenshot → OCR → confirm → save · history import
+  v1.2   ▢   Smart categories · filters · duplicates · top-places insights
   v1.3   ▢   CSV / PDF export · Share Extension
   v2.0   ▢   Widgets · Live Activities · budget alerts
   v2.1   ▢   CloudKit · multi-wallet · recurring
