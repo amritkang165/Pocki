@@ -76,7 +76,7 @@ enum UPIScreenshotParser {
                 ?? (hit.hasSymbol ? aboveMerchant(for: hit.y, lines: lines) : nil)
 
             if isStatementChrome(merchant) { continue }
-            if isFailedNear(hit.y, lines: lines) { continue }
+            let isFailed = isFailedNear(hit.y, lines: lines)
             // Bare numbers without any merchant are ambiguous chrome, not rows.
             if !hit.hasSymbol && merchant == nil { continue }
 
@@ -95,7 +95,8 @@ enum UPIScreenshotParser {
                 date: date,
                 confidence: confidence,
                 rawText: ordered.joined(separator: "\n"),
-                sourceApp: app
+                sourceApp: app,
+                isFailed: isFailed
             ))
         }
         return transactions

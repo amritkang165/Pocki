@@ -30,6 +30,8 @@ struct OCRParseResult: Sendable {
     var rawText: String
     /// Which UPI app the screenshot belongs to, if detected.
     var sourceApp: UPIPaymentApp = .other
+    /// True for history rows the bank marked "Failed" / "Cancelled" / "Reversed".
+    var isFailed: Bool = false
 
     var didExtractAnything: Bool {
         amount != nil || !(merchant?.isEmpty ?? true) || date != nil
