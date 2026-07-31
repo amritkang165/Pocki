@@ -193,15 +193,23 @@ struct HistoryImportView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-                PrimaryButton(
-                    title: "Save \(viewModel.includedTransactions.count) expense\(viewModel.includedTransactions.count == 1 ? "" : "s")",
-                    isEnabled: viewModel.isValid
-                ) {
-                    if viewModel.saveAll() > 0 {
+                if viewModel.didSave {
+                    PrimaryButton(title: "Done") {
                         dismiss()
                     }
+                    .padding(.top, 4)
+                } else {
+                    PrimaryButton(
+                        title: "Save \(viewModel.includedTransactions.count) expense\(viewModel.includedTransactions.count == 1 ? "" : "s")",
+                        isEnabled: viewModel.isValid
+                    ) {
+                        _ = viewModel.saveAll()
+                        if viewModel.lastSkipped == 0 {
+                            dismiss()
+                        }
+                    }
+                    .padding(.top, 4)
                 }
-                .padding(.top, 4)
             }
             .padding(20)
         }

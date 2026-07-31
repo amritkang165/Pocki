@@ -53,6 +53,11 @@ final class HistoryImportViewModel {
     private(set) var sourceApp: UPIPaymentApp?
     private(set) var screenshotImage: UIImage?
     private(set) var isScanning: Bool = false
+    /// True once the user has run a save, so the review sheet can switch from
+    /// "Save" to "Done" and surface the outcome.
+    private(set) var didSave = false
+    /// Number of rows the last save skipped because they already existed.
+    private(set) var lastSkipped = 0
     var statusMessage: String?
     var errorMessage: String?
 
@@ -114,6 +119,8 @@ final class HistoryImportViewModel {
         sourceApp = nil
         statusMessage = nil
         errorMessage = nil
+        didSave = false
+        lastSkipped = 0
     }
 
     func remove(_ transaction: HistoryTransaction) {
@@ -148,15 +155,17 @@ final class HistoryImportViewModel {
 
         let skipped = expenseService.createIfMissing(toInsert)
         let saved = toInsert.count - skipped
+        lastSkipped = skipped
+        didSave = true
 
         if saved == 0 {
             statusMessage = "Everything is already in your expenses — nothing new saved."
             HapticService.warning()
+        } else if skipped > 0 {
+            statusMessage = "Saved \(saved) — \(skipped) already exist, so they were skipped."
+            HapticService.success()
         } else {
-            statusMessage = saved == 1 ? "Saved 1 expense" : "Saved \(saved) expenses"
-            if skipped > 0 {
-                statusMessage! += " · skipped \(skipped) already-existing"
-            }
+            statusMessage = saved == 1 ? "Saved 1 expense." : "Saved \(saved) expenses."
             HapticService.success()
         }
         return saved
